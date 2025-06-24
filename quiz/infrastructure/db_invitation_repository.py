@@ -1,6 +1,6 @@
 from typing import Optional
 from uuid import UUID
-from django.utils import timezone
+
 from django.db import IntegrityError
 
 from quiz.domain.invitation.invitation import Invitation

@@ -1,7 +1,7 @@
 import unittest
+from datetime import datetime
 from unittest.mock import Mock, patch
 from uuid import UUID
-from datetime import datetime
 
 from quiz.application.send_invitation.send_invitation_command import SendInvitationCommand
 from quiz.application.send_invitation.send_invitation_command_handler import SendInvitationCommandHandler

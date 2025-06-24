@@ -1,4 +1,5 @@
-from logging import getLogger
+from logging import getLogger, Logger
+from typing import Optional
 
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
@@ -6,9 +7,10 @@ from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.status import HTTP_500_INTERNAL_SERVER_ERROR, HTTP_400_BAD_REQUEST, HTTP_409_CONFLICT
 from rest_framework.views import APIView
-from voluptuous import MultipleInvalid
+from voluptuous import MultipleInvalid, Schema
 
 from quiz.application.create_quiz.create_quiz_command import CreateQuizCommand
+from quiz.application.create_quiz.create_quiz_command_handler import CreateQuizCommandHandler
 from quiz.application.create_quiz.create_quiz_command_handler_factory import CreateQuizCommandHandlerFactory
 from quiz.domain.quiz.answer_already_exists_exception import AnswerAlreadyExistsException
 from quiz.domain.quiz.invalid_number_of_answers_exception import InvalidNumberOfAnswersException
@@ -21,11 +23,18 @@ from quiz.infrastructure.views.create_quiz_view_schema import create_quiz_view_s
 class CreateQuizView(APIView):
     permission_classes = (IsAuthenticated,)
 
-    def __init__(self, *args, **kwargs) -> None:
+    def __init__(
+        self,
+        command_handler: Optional[CreateQuizCommandHandler] = None,
+        schema: Optional[Schema] = None,
+        logger: Optional[Logger] = None,
+        *args,
+        **kwargs,
+    ) -> None:
         super().__init__(*args, **kwargs)
-        self.__schema = create_quiz_view_schema
-        self.__command_handler = CreateQuizCommandHandlerFactory.create()
-        self.__logger = getLogger(__name__)
+        self.__schema = schema or create_quiz_view_schema
+        self.__command_handler = command_handler or CreateQuizCommandHandlerFactory.create()
+        self.__logger = logger or getLogger(__name__)
 
     def post(self, request: Request) -> Response:
         try:

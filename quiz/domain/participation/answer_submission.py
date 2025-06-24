@@ -1,8 +1,8 @@
 from django.db import models
 
 from quiz.domain.participation.participation import Participation
-from quiz.domain.quiz.question import Question
 from quiz.domain.quiz.answer import Answer
+from quiz.domain.quiz.question import Question
 
 
 class AnswerSubmission(models.Model):

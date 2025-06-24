@@ -1,4 +1,5 @@
-from logging import getLogger
+from logging import getLogger, Logger
+from typing import Optional
 from uuid import UUID
 
 from rest_framework import status
@@ -9,6 +10,7 @@ from rest_framework.status import HTTP_500_INTERNAL_SERVER_ERROR
 from rest_framework.views import APIView
 
 from quiz.application.get_creator_quizzes.get_creator_quizzes_query import GetCreatorQuizzesQuery
+from quiz.application.get_creator_quizzes.get_creator_quizzes_query_handler import GetCreatorQuizzesQueryHandler
 from quiz.application.get_creator_quizzes.get_creator_quizzes_query_handler_factory import (
     GetCreatorQuizzesQueryHandlerFactory,
 )
@@ -17,10 +19,16 @@ from quiz.application.get_creator_quizzes.get_creator_quizzes_query_handler_fact
 class GetCreatorQuizzesView(APIView):
     permission_classes = (IsAuthenticated,)
 
-    def __init__(self, *args, **kwargs) -> None:
+    def __init__(
+        self,
+        query_handler: Optional[GetCreatorQuizzesQueryHandler] = None,
+        logger: Optional[Logger] = None,
+        *args,
+        **kwargs,
+    ) -> None:
         super().__init__(*args, **kwargs)
-        self.__query_handler = GetCreatorQuizzesQueryHandlerFactory.create()
-        self.__logger = getLogger(__name__)
+        self.__query_handler = query_handler or GetCreatorQuizzesQueryHandlerFactory.create()
+        self.__logger = logger or getLogger(__name__)
 
     def get(self, request: Request, creator_id: UUID) -> Response:
         try:

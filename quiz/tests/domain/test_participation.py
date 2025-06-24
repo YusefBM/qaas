@@ -1,6 +1,6 @@
 import unittest
-from unittest.mock import Mock, patch
 from datetime import datetime
+from unittest.mock import Mock, patch
 from uuid import UUID
 
 from django.utils import timezone

@@ -44,6 +44,7 @@ class SubmitQuizAnswersCommandHandler:
 
         if len(command.answers) != quiz.total_questions:
             raise IncompleteQuizSubmissionException(
+                quiz_id=command.quiz_id,
                 expected_answers=quiz.total_questions,
                 received_answers=len(command.answers),
             )

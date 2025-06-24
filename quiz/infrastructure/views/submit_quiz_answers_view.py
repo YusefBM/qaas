@@ -1,4 +1,5 @@
-from logging import getLogger
+from logging import getLogger, Logger
+from typing import Optional
 from uuid import UUID
 
 from rest_framework import status
@@ -15,8 +16,10 @@ from rest_framework.status import (
 )
 from rest_framework.views import APIView
 from voluptuous import MultipleInvalid
+from voluptuous import Schema
 
 from quiz.application.submit_quiz_answers.submit_quiz_answers_command import SubmitQuizAnswersCommand, SubmittedAnswer
+from quiz.application.submit_quiz_answers.submit_quiz_answers_command_handler import SubmitQuizAnswersCommandHandler
 from quiz.application.submit_quiz_answers.submit_quiz_answers_command_handler_factory import (
     SubmitQuizAnswersCommandHandlerFactory,
 )
@@ -36,11 +39,18 @@ from user.domain.user_not_found_exception import UserNotFoundException
 class SubmitQuizAnswersView(APIView):
     permission_classes = (IsAuthenticated,)
 
-    def __init__(self, *args, **kwargs) -> None:
+    def __init__(
+        self,
+        command_handler: Optional[SubmitQuizAnswersCommandHandler] = None,
+        schema: Optional[Schema] = None,
+        logger: Optional[Logger] = None,
+        *args,
+        **kwargs,
+    ) -> None:
         super().__init__(*args, **kwargs)
-        self.__schema = submit_quiz_answers_view_schema
-        self.__command_handler = SubmitQuizAnswersCommandHandlerFactory.create()
-        self.__logger = getLogger(__name__)
+        self.__command_handler = command_handler or SubmitQuizAnswersCommandHandlerFactory.create()
+        self.__schema = schema or submit_quiz_answers_view_schema
+        self.__logger = logger or getLogger(__name__)
 
     def post(self, request: Request, quiz_id: UUID) -> Response:
         try:

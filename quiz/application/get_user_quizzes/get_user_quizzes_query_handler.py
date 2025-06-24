@@ -3,10 +3,9 @@ from logging import getLogger
 from quiz.application.get_user_quizzes.get_user_quizzes_query import GetUserQuizzesQuery
 from quiz.application.get_user_quizzes.get_user_quizzes_response import GetUserQuizzesResponse, QuizParticipationSummary
 from quiz.domain.participation.participation import Participation
-from quiz.domain.quiz.quiz_repository import QuizRepository
-from quiz.domain.participation.participation_repository import ParticipationRepository
 from quiz.domain.participation.participation_related_attribute import ParticipationRelatedAttribute
-from user.domain.user_repository import UserRepository
+from quiz.domain.participation.participation_repository import ParticipationRepository
+from quiz.domain.quiz.quiz_repository import QuizRepository
 
 
 class GetUserQuizzesQueryHandler:

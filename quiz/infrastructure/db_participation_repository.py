@@ -4,7 +4,6 @@ from django.db import IntegrityError
 
 from quiz.domain.participation.participation import Participation
 from quiz.domain.participation.participation_already_exists_exception import ParticipationAlreadyExistsException
-from quiz.domain.participation.participation_not_found_exception import ParticipationNotFoundException
 from quiz.domain.participation.participation_not_found_for_quiz_and_participant_exception import (
     ParticipationNotFoundForQuizAndParticipantException,
 )

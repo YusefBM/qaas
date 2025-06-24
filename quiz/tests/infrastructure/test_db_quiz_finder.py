@@ -2,11 +2,11 @@ import unittest
 from unittest.mock import Mock, patch
 from uuid import UUID
 
+from quiz.domain.quiz.answer import Answer
+from quiz.domain.quiz.question import Question
 from quiz.domain.quiz.quiz import Quiz
 from quiz.domain.quiz.quiz_data import QuizData, QuestionData, AnswerData
 from quiz.domain.quiz.quiz_not_found_exception import QuizNotFoundException
-from quiz.domain.quiz.answer import Answer
-from quiz.domain.quiz.question import Question
 from quiz.infrastructure.db_quiz_finder import DbQuizFinder
 
 

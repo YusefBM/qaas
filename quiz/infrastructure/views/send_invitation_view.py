@@ -1,4 +1,5 @@
-from logging import getLogger
+from logging import getLogger, Logger
+from typing import Optional
 
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.request import Request
@@ -11,9 +12,10 @@ from rest_framework.status import (
     HTTP_409_CONFLICT,
 )
 from rest_framework.views import APIView
-from voluptuous import MultipleInvalid
+from voluptuous import MultipleInvalid, Schema
 
 from quiz.application.send_invitation.send_invitation_command import SendInvitationCommand
+from quiz.application.send_invitation.send_invitation_command_handler import SendInvitationCommandHandler
 from quiz.application.send_invitation.send_invitation_command_handler_factory import SendInvitationCommandHandlerFactory
 from quiz.domain.invitation.invitation_already_exists_exception import InvitationAlreadyExistsException
 from quiz.domain.invitation.only_quiz_creator_can_send_invitation_exception import (
@@ -27,11 +29,18 @@ from user.domain.user_not_found_exception import UserNotFoundException
 class SendInvitationView(APIView):
     permission_classes = (IsAuthenticated,)
 
-    def __init__(self, *args, **kwargs) -> None:
+    def __init__(
+        self,
+        command_handler: Optional[SendInvitationCommandHandler] = None,
+        schema: Optional[Schema] = None,
+        logger: Optional[Logger] = None,
+        *args,
+        **kwargs,
+    ) -> None:
         super().__init__(*args, **kwargs)
-        self.__command_handler = SendInvitationCommandHandlerFactory.create()
-        self.__schema = send_invitation_view_schema
-        self.__logger = getLogger(__name__)
+        self.__command_handler = command_handler or SendInvitationCommandHandlerFactory.create()
+        self.__schema = schema or send_invitation_view_schema
+        self.__logger = logger or getLogger(__name__)
 
     def post(self, request: Request, quiz_id: str) -> Response:
         try:

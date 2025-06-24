@@ -1,8 +1,8 @@
 from quiz.application.get_quiz_query.get_quiz_query_handler import GetQuizQueryHandler
 from quiz.application.get_quiz_query.quiz_data_mapper import QuizDataMapper
-from quiz.infrastructure.db_quiz_finder import DbQuizFinder
-from quiz.infrastructure.db_participation_repository import DbParticipationRepository
 from quiz.infrastructure.db_invitation_repository import DbInvitationRepository
+from quiz.infrastructure.db_participation_repository import DbParticipationRepository
+from quiz.infrastructure.db_quiz_finder import DbQuizFinder
 
 
 class GetQuizQueryHandlerFactory:

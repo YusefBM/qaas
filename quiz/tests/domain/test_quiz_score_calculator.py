@@ -2,18 +2,18 @@ import unittest
 from unittest.mock import Mock, patch
 from uuid import UUID
 
-from quiz.domain.participation.quiz_score_calculator import QuizScoreCalculator
-from quiz.domain.quiz.question_repository import QuestionRepository
-from quiz.domain.quiz.answer_repository import AnswerRepository
-from quiz.domain.quiz.quiz import Quiz
-from quiz.domain.quiz.question import Question
-from quiz.domain.quiz.answer import Answer
-from quiz.domain.participation.participation import Participation
 from quiz.domain.participation.answer_submission import AnswerSubmission
 from quiz.domain.participation.duplicate_answer_submission_exception import DuplicateAnswerSubmissionException
-from quiz.domain.quiz.invalid_question_for_quiz_exception import InvalidQuestionForQuizException
-from quiz.domain.quiz.invalid_answer_for_question_exception import InvalidAnswerForQuestionException
+from quiz.domain.participation.participation import Participation
+from quiz.domain.participation.quiz_score_calculator import QuizScoreCalculator
 from quiz.domain.participation.quiz_score_result import QuizScoreResult, SubmittedAnswer
+from quiz.domain.quiz.answer import Answer
+from quiz.domain.quiz.answer_repository import AnswerRepository
+from quiz.domain.quiz.invalid_answer_for_question_exception import InvalidAnswerForQuestionException
+from quiz.domain.quiz.invalid_question_for_quiz_exception import InvalidQuestionForQuizException
+from quiz.domain.quiz.question import Question
+from quiz.domain.quiz.question_repository import QuestionRepository
+from quiz.domain.quiz.quiz import Quiz
 
 
 @patch("quiz.domain.participation.quiz_score_calculator.AnswerSubmission")

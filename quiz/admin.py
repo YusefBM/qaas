@@ -1,15 +1,14 @@
 from django.contrib import admin
-from django.utils.html import format_html
+from django.db.models import Avg, Count
 from django.urls import reverse
-from django.utils.safestring import mark_safe
-from django.db.models import Avg, Count, Max, Min
+from django.utils.html import format_html
 
-from quiz.domain.quiz.quiz import Quiz
-from quiz.domain.quiz.question import Question
-from quiz.domain.quiz.answer import Answer
-from quiz.domain.participation.participation import Participation
-from quiz.domain.participation.answer_submission import AnswerSubmission
 from quiz.domain.invitation.invitation import Invitation
+from quiz.domain.participation.answer_submission import AnswerSubmission
+from quiz.domain.participation.participation import Participation
+from quiz.domain.quiz.answer import Answer
+from quiz.domain.quiz.question import Question
+from quiz.domain.quiz.quiz import Quiz
 
 
 # =============================================================================

@@ -1,4 +1,5 @@
-from logging import getLogger
+from logging import getLogger, Logger
+from typing import Optional
 from uuid import UUID
 
 from rest_framework import status
@@ -9,6 +10,7 @@ from rest_framework.status import HTTP_500_INTERNAL_SERVER_ERROR, HTTP_404_NOT_F
 from rest_framework.views import APIView
 
 from quiz.application.get_quiz_scores.get_quiz_scores_query import GetQuizScoresQuery
+from quiz.application.get_quiz_scores.get_quiz_scores_query_handler import GetQuizScoresQueryHandler
 from quiz.application.get_quiz_scores.get_quiz_scores_query_handler_factory import GetQuizScoresQueryHandlerFactory
 from quiz.domain.quiz.quiz_not_found_exception import QuizNotFoundException
 from quiz.domain.quiz.unauthorized_quiz_access_exception import UnauthorizedQuizAccessException
@@ -17,10 +19,16 @@ from quiz.domain.quiz.unauthorized_quiz_access_exception import UnauthorizedQuiz
 class GetQuizScoresView(APIView):
     permission_classes = (IsAuthenticated,)
 
-    def __init__(self, *args, **kwargs) -> None:
+    def __init__(
+        self,
+        query_handler: Optional[GetQuizScoresQueryHandler] = None,
+        logger: Optional[Logger] = None,
+        *args,
+        **kwargs,
+    ) -> None:
         super().__init__(*args, **kwargs)
-        self.__query_handler = GetQuizScoresQueryHandlerFactory.create()
-        self.__logger = getLogger(__name__)
+        self.__query_handler = query_handler or GetQuizScoresQueryHandlerFactory.create()
+        self.__logger = logger or getLogger(__name__)
 
     def get(self, request: Request, quiz_id: UUID) -> Response:
         try:

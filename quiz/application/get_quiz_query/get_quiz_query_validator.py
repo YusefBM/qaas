@@ -1,4 +1,5 @@
 from uuid import UUID
+
 from quiz.application.get_quiz_query.get_quiz_query import GetQuizQuery
 
 

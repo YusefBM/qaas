@@ -5,7 +5,7 @@ from uuid import UUID
 
 from quiz.application.get_creator_quizzes.get_creator_quizzes_query import GetCreatorQuizzesQuery
 from quiz.application.get_creator_quizzes.get_creator_quizzes_query_handler import GetCreatorQuizzesQueryHandler
-from quiz.application.get_creator_quizzes.get_creator_quizzes_response import GetCreatorQuizzesResponse, QuizSummary
+from quiz.application.get_creator_quizzes.get_creator_quizzes_response import GetCreatorQuizzesResponse
 from quiz.domain.quiz.quiz import Quiz
 from quiz.domain.quiz.quiz_repository import QuizRepository
 

@@ -2,12 +2,12 @@ import unittest
 from unittest.mock import Mock
 from uuid import UUID
 
-from quiz.domain.quiz.question_validator import QuestionValidator
-from quiz.domain.quiz.question_validator_context import QuestionValidatorContext
-from quiz.domain.quiz.question import Question
 from quiz.domain.quiz.answer import Answer
 from quiz.domain.quiz.invalid_number_of_answers_exception import InvalidNumberOfAnswersException
 from quiz.domain.quiz.invalid_number_of_correct_answers_exception import InvalidNumberOfCorrectAnswersException
+from quiz.domain.quiz.question import Question
+from quiz.domain.quiz.question_validator import QuestionValidator
+from quiz.domain.quiz.question_validator_context import QuestionValidatorContext
 
 
 class TestQuestionValidator(unittest.TestCase):

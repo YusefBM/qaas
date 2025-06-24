@@ -52,8 +52,8 @@ class TestDjangoEmailService(unittest.TestCase):
         }
 
         self.assertEqual(mock_render.call_count, 2)
-        mock_render.assert_any_call("quiz/emails/invitation_email.html", expected_context)
-        mock_render.assert_any_call("quiz/emails/invitation_email.txt", expected_context)
+        mock_render.assert_any_call("invitation_email.html", expected_context)
+        mock_render.assert_any_call("invitation_email.txt", expected_context)
 
         mock_send_mail.assert_called_once_with(
             subject="You're invited to take the quiz: JavaScript Fundamentals",
@@ -86,8 +86,8 @@ class TestDjangoEmailService(unittest.TestCase):
             "invitation_acceptance_link": self.invitation_link,
         }
 
-        mock_render.assert_any_call("quiz/emails/invitation_email.html", expected_context)
-        mock_render.assert_any_call("quiz/emails/invitation_email.txt", expected_context)
+        mock_render.assert_any_call("invitation_email.html", expected_context)
+        mock_render.assert_any_call("invitation_email.txt", expected_context)
 
     @patch("quiz.infrastructure.django_email_service.send_mail")
     @patch("quiz.infrastructure.django_email_service.render_to_string")
@@ -109,8 +109,8 @@ class TestDjangoEmailService(unittest.TestCase):
             "invitation_acceptance_link": self.invitation_link,
         }
 
-        mock_render.assert_any_call("quiz/emails/invitation_email.html", expected_context)
-        mock_render.assert_any_call("quiz/emails/invitation_email.txt", expected_context)
+        mock_render.assert_any_call("invitation_email.html", expected_context)
+        mock_render.assert_any_call("invitation_email.txt", expected_context)
 
     @patch("quiz.infrastructure.django_email_service.send_mail")
     @patch("quiz.infrastructure.django_email_service.render_to_string")
@@ -234,8 +234,8 @@ class TestDjangoEmailService(unittest.TestCase):
             "invitation_acceptance_link": different_link,
         }
 
-        mock_render.assert_any_call("quiz/emails/invitation_email.html", expected_context)
-        mock_render.assert_any_call("quiz/emails/invitation_email.txt", expected_context)
+        mock_render.assert_any_call("invitation_email.html", expected_context)
+        mock_render.assert_any_call("invitation_email.txt", expected_context)
 
         mock_send_mail.assert_called_once_with(
             subject="You're invited to take the quiz: Python Advanced",

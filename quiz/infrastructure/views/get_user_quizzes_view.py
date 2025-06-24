@@ -1,4 +1,5 @@
-from logging import getLogger
+from logging import getLogger, Logger
+from typing import Optional
 
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
@@ -8,6 +9,7 @@ from rest_framework.status import HTTP_500_INTERNAL_SERVER_ERROR
 from rest_framework.views import APIView
 
 from quiz.application.get_user_quizzes.get_user_quizzes_query import GetUserQuizzesQuery
+from quiz.application.get_user_quizzes.get_user_quizzes_query_handler import GetUserQuizzesQueryHandler
 from quiz.application.get_user_quizzes.get_user_quizzes_query_handler_factory import GetUserQuizzesQueryHandlerFactory
 from user.domain.user_not_found_exception import UserNotFoundException
 
@@ -15,10 +17,16 @@ from user.domain.user_not_found_exception import UserNotFoundException
 class GetUserQuizzesView(APIView):
     permission_classes = (IsAuthenticated,)
 
-    def __init__(self, *args, **kwargs) -> None:
+    def __init__(
+        self,
+        query_handler: Optional[GetUserQuizzesQueryHandler] = None,
+        logger: Optional[Logger] = None,
+        *args,
+        **kwargs,
+    ) -> None:
         super().__init__(*args, **kwargs)
-        self.__query_handler = GetUserQuizzesQueryHandlerFactory.create()
-        self.__logger = getLogger(__name__)
+        self.__query_handler = query_handler or GetUserQuizzesQueryHandlerFactory.create()
+        self.__logger = logger or getLogger(__name__)
 
     def get(self, request: Request) -> Response:
         try:

@@ -1,5 +1,6 @@
-from voluptuous import Required, Schema, Invalid, All, Optional
 import re
+
+from voluptuous import Required, Schema, Invalid, All
 
 
 def validate_email(value: str | None) -> str:

@@ -1,9 +1,9 @@
 from uuid import UUID
 
 from quiz.domain.quiz.quiz import Quiz
+from quiz.domain.quiz.quiz_data import QuizData, QuestionData, AnswerData
 from quiz.domain.quiz.quiz_finder import QuizFinder
 from quiz.domain.quiz.quiz_not_found_exception import QuizNotFoundException
-from quiz.domain.quiz.quiz_data import QuizData, QuestionData, AnswerData
 
 
 class DbQuizFinder(QuizFinder):

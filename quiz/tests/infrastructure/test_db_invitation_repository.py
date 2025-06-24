@@ -8,8 +8,8 @@ from quiz.domain.invitation.invitation import Invitation
 from quiz.domain.invitation.invitation_already_exists_exception import InvitationAlreadyExistsException
 from quiz.domain.invitation.invitation_not_found_exception import InvitationNotFoundException
 from quiz.domain.invitation.invitation_related_attribute import InvitationRelatedAttribute
-from quiz.infrastructure.db_invitation_repository import DbInvitationRepository
 from quiz.domain.quiz.quiz import Quiz
+from quiz.infrastructure.db_invitation_repository import DbInvitationRepository
 from user.domain.user import User
 
 
@@ -113,7 +113,7 @@ class TestDbInvitationRepository(unittest.TestCase):
         invitation.invited.id = self.participant_id
 
         mock_constraint_diag = Mock()
-        mock_constraint_diag.constraint_name = "quiz_invitation_quiz_id_participant_id"
+        mock_constraint_diag.constraint_name = "quiz_invitation_quiz_id_invited_id"
 
         class MockCause(Exception):
             def __init__(self):
@@ -161,7 +161,7 @@ class TestDbInvitationRepository(unittest.TestCase):
         result = self.repository.exists_by_quiz_and_invited(self.quiz_id, self.participant_id)
 
         self.assertTrue(result)
-        mock_objects.filter.assert_called_once_with(quiz_id=self.quiz_id, participant_id=self.participant_id)
+        mock_objects.filter.assert_called_once_with(quiz_id=self.quiz_id, invited_id=self.participant_id)
 
     @patch("quiz.domain.invitation.invitation.Invitation.objects")
     def test_exists_by_quiz_and_participant_returns_false_when_not_exists(self, mock_objects):
@@ -170,7 +170,7 @@ class TestDbInvitationRepository(unittest.TestCase):
         result = self.repository.exists_by_quiz_and_invited(self.quiz_id, self.participant_id)
 
         self.assertFalse(result)
-        mock_objects.filter.assert_called_once_with(quiz_id=self.quiz_id, participant_id=self.participant_id)
+        mock_objects.filter.assert_called_once_with(quiz_id=self.quiz_id, invited_id=self.participant_id)
 
     @patch("quiz.domain.invitation.invitation.Invitation.objects")
     def test_find_or_fail_by_id_with_empty_related_attributes_list(self, mock_objects):
@@ -190,7 +190,7 @@ class TestDbInvitationRepository(unittest.TestCase):
 
     def test_is_unique_constraint_violation_returns_true_for_quiz_participant_constraint(self):
         mock_constraint_diag = Mock()
-        mock_constraint_diag.constraint_name = "quiz_invitation_quiz_id_participant_id"
+        mock_constraint_diag.constraint_name = "quiz_invitation_quiz_id_invited_id"
 
         class MockCause(Exception):
             def __init__(self):

@@ -1,5 +1,6 @@
-from django.db import IntegrityError
 from typing import Optional, Dict
+
+from django.db import IntegrityError
 
 from quiz.domain.quiz.question import Question
 from quiz.domain.quiz.question_already_exists_exception import QuestionAlreadyExistsException

@@ -1,13 +1,11 @@
 import unittest
-from unittest.mock import Mock
 from datetime import datetime
+from unittest.mock import Mock
 from uuid import UUID
 
 from django.utils import timezone
 
 from quiz.domain.quiz.quiz import Quiz
-from quiz.domain.quiz.empty_quiz_title_exception import EmptyQuizTitleException
-from quiz.domain.quiz.invalid_quiz_title_length_exception import InvalidQuizTitleLengthException
 from user.domain.user import User
 
 

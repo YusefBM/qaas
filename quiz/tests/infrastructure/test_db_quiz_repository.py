@@ -132,7 +132,6 @@ class TestDbQuizRepository(unittest.TestCase):
 
         mock_queryset = Mock()
         mock_distinct_queryset = Mock()
-        mock_ordered_queryset = Mock()
 
         mock_queryset.distinct.return_value = mock_distinct_queryset
         mock_distinct_queryset.order_by.return_value = [quiz1, quiz2]

@@ -1,4 +1,5 @@
 from typing import List
+
 from quiz.application.get_quiz_query.get_quiz_query_response import (
     GetQuizQueryResponse,
     QuizQuestion,

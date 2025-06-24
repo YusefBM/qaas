@@ -1,4 +1,5 @@
-from logging import getLogger
+from logging import getLogger, Logger
+from typing import Optional
 from uuid import UUID
 
 from rest_framework import status
@@ -13,9 +14,10 @@ from rest_framework.status import (
     HTTP_409_CONFLICT,
 )
 from rest_framework.views import APIView
-from voluptuous import MultipleInvalid
+from voluptuous import MultipleInvalid, Schema
 
 from quiz.application.accept_invitation.accept_invitation_command import AcceptInvitationCommand
+from quiz.application.accept_invitation.accept_invitation_command_handler import AcceptInvitationCommandHandler
 from quiz.application.accept_invitation.accept_invitation_command_handler_factory import (
     AcceptInvitationCommandHandlerFactory,
 )
@@ -31,11 +33,18 @@ from quiz.domain.participation.participation_already_exists_exception import Par
 class AcceptInvitationView(APIView):
     permission_classes = (IsAuthenticated,)
 
-    def __init__(self, *args, **kwargs) -> None:
+    def __init__(
+        self,
+        command_handler: Optional[AcceptInvitationCommandHandler] = None,
+        schema: Optional[Schema] = None,
+        logger: Optional[Logger] = None,
+        *args,
+        **kwargs,
+    ) -> None:
         super().__init__(*args, **kwargs)
-        self.__command_handler = AcceptInvitationCommandHandlerFactory.create()
-        self.__schema = accept_invitation_schema
-        self.__logger = getLogger(__name__)
+        self.__command_handler = command_handler or AcceptInvitationCommandHandlerFactory.create()
+        self.__schema = schema or accept_invitation_schema
+        self.__logger = logger or getLogger(__name__)
 
     def post(self, request: Request, invitation_id: UUID) -> Response:
         try:

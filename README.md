@@ -145,7 +145,6 @@ For detailed authentication usage, see the [Testing Guide](HOW_TO_TEST.md).
 The API uses **URL path versioning** for clean and maintainable version management:
 - **Current Version**: `v1`
 - **Base URL**: `http://localhost:8000/api/v1/`
-- **Versioning Strategy**: Centralized at the project level to avoid repetitive URL prefixes
 - **Future Versions**: Easy to add (`v2`, `v3`, etc.) without breaking existing endpoints
 
 ### Core API Endpoints (v1)
