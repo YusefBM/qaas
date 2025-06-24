@@ -24,17 +24,14 @@ env = environ.Env(
     DJANGO_SECRET_KEY=(str, ""),
     DEBUG=(bool, False),
     ALLOWED_HOSTS=([str], []),
-    
     # Database Settings
     DB_NAME=(str, ""),
     DB_USERNAME=(str, ""),
     DB_PASSWORD=(str, ""),
     DB_HOST=(str, ""),
     DB_PORT=(str, ""),
-    
     # Application Settings
     BASE_URL=(str, ""),
-    
     # Email Configuration
     EMAIL_BACKEND=(str, ""),
     EMAIL_HOST=(str, ""),
@@ -43,10 +40,8 @@ env = environ.Env(
     EMAIL_HOST_USER=(str, ""),
     EMAIL_HOST_PASSWORD=(str, ""),
     DEFAULT_FROM_EMAIL=(str, ""),
-    
     # Celery Configuration
     CELERY_BROKER_URL=(str, ""),
-    #CELERY_RESULT_BACKEND=(str, "redis://redis:6379/0"),
     CELERY_TASK_ALWAYS_EAGER=(bool, False),
 )
 
@@ -227,7 +222,6 @@ BASE_URL = env("BASE_URL")
 
 # Celery Configuration
 CELERY_BROKER_URL = env("CELERY_BROKER_URL")
-#CELERY_RESULT_BACKEND = env("CELERY_RESULT_BACKEND")
 CELERY_ACCEPT_CONTENT = ["json"]
 CELERY_TASK_SERIALIZER = "json"
 CELERY_RESULT_SERIALIZER = "json"

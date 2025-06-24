@@ -11,7 +11,7 @@ This document provides a comprehensive guide on how to test the Quiz API applica
 ## Base URL
 
 ```
-http://localhost:8000/api
+http://localhost:8000/api/v1/
 ```
 
 ## Testing Workflow
@@ -20,7 +20,7 @@ http://localhost:8000/api
 
 #### 1.1 Register First User (Quiz Creator)
 ```bash
-curl -X POST http://localhost:8000/api/auth/register/ \
+curl -X POST http://localhost:8000/api/v1/auth/register/ \
   -H "Content-Type: application/json" \
   -d '{
     "username": "creator_user",
@@ -33,7 +33,7 @@ curl -X POST http://localhost:8000/api/auth/register/ \
 
 #### 1.2 Register Second User (Quiz Participant)
 ```bash
-curl -X POST http://localhost:8000/api/auth/register/ \
+curl -X POST http://localhost:8000/api/v1/auth/register/ \
   -H "Content-Type: application/json" \
   -d '{
     "username": "participant_user",
@@ -46,7 +46,7 @@ curl -X POST http://localhost:8000/api/auth/register/ \
 
 #### 1.3 Login (Alternative to Registration)
 ```bash
-curl -X POST http://localhost:8000/api/auth/login/ \
+curl -X POST http://localhost:8000/api/v1/auth/login/ \
   -H "Content-Type: application/json" \
   -d '{
     "username": "creator_user",
@@ -56,7 +56,7 @@ curl -X POST http://localhost:8000/api/auth/login/ \
 
 #### 1.4 Get User Profile
 ```bash
-curl -X GET http://localhost:8000/api/profile/ \
+curl -X GET http://localhost:8000/api/v1/profile/ \
   -H "Authorization: Bearer YOUR_ACCESS_TOKEN"
 ```
 
@@ -64,7 +64,7 @@ curl -X GET http://localhost:8000/api/profile/ \
 
 #### 2.1 Create a Quiz (as Creator)
 ```bash
-curl -X POST http://localhost:8000/api/1.0/quizzes/ \
+curl -X POST http://localhost:8000/api/v1/quizzes/ \
   -H "Content-Type: application/json" \
   -H "Authorization: Bearer YOUR_CREATOR_ACCESS_TOKEN" \
   -d '{
@@ -121,19 +121,19 @@ curl -X POST http://localhost:8000/api/1.0/quizzes/ \
 
 #### 2.2 Get Quiz Details (As a creator, invited or participant)
 ```bash
-curl -X GET http://localhost:8000/api/1.0/quizzes/QUIZ_UUID/ \
+curl -X GET http://localhost:8000/api/v1/quizzes/QUIZ_UUID/ \
   -H "Authorization: Bearer YOUR_ACCESS_TOKEN"
 ```
 
 #### 2.3 Get User's Quizzes (Quizzes the user can participate in or has already participated in)
 ```bash
-curl -X GET http://localhost:8000/api/1.0/quizzes/ \
+curl -X GET http://localhost:8000/api/v1/quizzes/ \
   -H "Authorization: Bearer YOUR_ACCESS_TOKEN"
 ```
 
 #### 2.4 Get Creator's Quizzes (Quizzes created by the user)
 ```bash
-curl -X GET http://localhost:8000/api/1.0/creators/CREATOR_UUID/quizzes/ \
+curl -X GET http://localhost:8000/api/v1/creators/CREATOR_UUID/quizzes/ \
   -H "Authorization: Bearer YOUR_CREATOR_ACCESS_TOKEN"
 ```
 
@@ -141,7 +141,7 @@ curl -X GET http://localhost:8000/api/1.0/creators/CREATOR_UUID/quizzes/ \
 
 #### 3.1 Send Quiz Invitation (as Creator)
 ```bash
-curl -X POST http://localhost:8000/api/1.0/quizzes/QUIZ_UUID/invitations/ \
+curl -X POST http://localhost:8000/api/v1/quizzes/QUIZ_UUID/invitations/ \
   -H "Content-Type: application/json" \
   -H "Authorization: Bearer YOUR_CREATOR_ACCESS_TOKEN" \
   -d '{
@@ -152,7 +152,7 @@ curl -X POST http://localhost:8000/api/1.0/quizzes/QUIZ_UUID/invitations/ \
 
 #### 3.2 Accept Quiz Invitation (as Participant)
 ```bash
-curl -X POST http://localhost:8000/api/1.0/invitations/INVITATION_UUID/accept/ \
+curl -X POST http://localhost:8000/api/v1/invitations/INVITATION_UUID/accept/ \
   -H "Authorization: Bearer YOUR_PARTICIPANT_ACCESS_TOKEN"
 ```
 
@@ -160,7 +160,7 @@ curl -X POST http://localhost:8000/api/1.0/invitations/INVITATION_UUID/accept/ \
 
 #### 4.1 Submit Quiz Answers (as Participant)
 ```bash
-curl -X POST http://localhost:8000/api/1.0/quizzes/QUIZ_UUID/submit/ \
+curl -X POST http://localhost:8000/api/v1/quizzes/QUIZ_UUID/submit/ \
   -H "Content-Type: application/json" \
   -H "Authorization: Bearer YOUR_PARTICIPANT_ACCESS_TOKEN" \
   -d '{
@@ -182,7 +182,7 @@ curl -X POST http://localhost:8000/api/1.0/quizzes/QUIZ_UUID/submit/ \
 
 #### 5.1 Get Quiz Scores (as Creator)
 ```bash
-curl -X GET http://localhost:8000/api/1.0/quizzes/QUIZ_UUID/scores/ \
+curl -X GET http://localhost:8000/api/v1/quizzes/QUIZ_UUID/scores/ \
   -H "Authorization: Bearer YOUR_CREATOR_ACCESS_TOKEN"
 ```
 
@@ -191,7 +191,7 @@ curl -X GET http://localhost:8000/api/1.0/quizzes/QUIZ_UUID/scores/ \
 
 #### 6.1 Refresh Token
 ```bash
-curl -X POST http://localhost:8000/api/auth/refresh/ \
+curl -X POST http://localhost:8000/api/v1/auth/refresh/ \
   -H "Content-Type: application/json" \
   -d '{
     "refresh": "YOUR_REFRESH_TOKEN"
@@ -200,7 +200,7 @@ curl -X POST http://localhost:8000/api/auth/refresh/ \
 
 #### 6.2 Verify Token
 ```bash
-curl -X POST http://localhost:8000/api/auth/verify/ \
+curl -X POST http://localhost:8000/api/v1/auth/verify/ \
   -H "Content-Type: application/json" \
   -d '{
     "token": "YOUR_ACCESS_TOKEN"
@@ -209,7 +209,7 @@ curl -X POST http://localhost:8000/api/auth/verify/ \
 
 #### 6.3 Logout
 ```bash
-curl -X POST http://localhost:8000/api/auth/logout/ \
+curl -X POST http://localhost:8000/api/v1/auth/logout/ \
   -H "Content-Type: application/json" \
   -d '{
     "refresh": "YOUR_REFRESH_TOKEN"
@@ -239,11 +239,11 @@ export PARTICIPANT_UUID="your_participant_uuid_here"
 Then you can use these variables in your curl commands:
 ```bash
 # Example: Get quiz details
-curl -X GET http://localhost:8000/api/1.0/quizzes/$QUIZ_ID/ \
+curl -X GET http://localhost:8000/api/v1/quizzes/$QUIZ_ID/ \
   -H "Authorization: Bearer $CREATOR_TOKEN"
 
 # Example: Send invitation
-curl -X POST http://localhost:8000/api/1.0/quizzes/$QUIZ_ID/invitations/ \
+curl -X POST http://localhost:8000/api/v1/quizzes/$QUIZ_ID/invitations/ \
   -H "Content-Type: application/json" \
   -H "Authorization: Bearer $CREATOR_TOKEN" \
   -d '{"participant_email": "participant@example.com"}'

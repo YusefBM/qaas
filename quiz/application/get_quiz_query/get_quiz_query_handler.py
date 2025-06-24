@@ -51,7 +51,9 @@ class GetQuizQueryHandler:
         if self.__participation_repository.exists_by_quiz_and_participant(quiz_data.quiz_id, participant_id):
             return True
 
-        if self.__invitation_repository.exists_by_quiz_and_invited(quiz_id=quiz_data.quiz_id, invited_id=participant_id):
+        if self.__invitation_repository.exists_by_quiz_and_invited(
+            quiz_id=quiz_data.quiz_id, invited_id=participant_id
+        ):
             return True
 
         return False

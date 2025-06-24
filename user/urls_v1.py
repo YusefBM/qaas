@@ -1,3 +1,7 @@
+"""
+User API v1 URL Configuration
+"""
+
 from django.urls import path
 from rest_framework_simplejwt.views import TokenVerifyView
 

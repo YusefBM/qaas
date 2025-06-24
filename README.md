@@ -73,7 +73,7 @@ make run
 ```
 
 4. **Access the application:**
-   - API Base URL: http://localhost:8000/api/
+   - API Base URL: http://localhost:8000/api/v1/
    - Admin Interface: http://localhost:8000/admin/
 
 ### Common Development Commands
@@ -123,12 +123,12 @@ The API uses **JWT Authentication** with the following endpoints:
 
 | Endpoint | Method | Description |
 |----------|--------|-------------|
-| `/api/auth/register/` | POST | User registration |
-| `/api/auth/login/` | POST | Login and get JWT tokens |
-| `/api/auth/refresh/` | POST | Refresh access token |
-| `/api/auth/verify/` | POST | Verify token validity |
-| `/api/auth/logout/` | POST | Logout and blacklist token |
-| `/api/profile/` | GET | Get user profile |
+| `/api/v1/auth/register/` | POST | User registration |
+| `/api/v1/auth/login/` | POST | Login and get JWT tokens |
+| `/api/v1/auth/refresh/` | POST | Refresh access token |
+| `/api/v1/auth/verify/` | POST | Verify token validity |
+| `/api/v1/auth/logout/` | POST | Logout and blacklist token |
+| `/api/v1/profile/` | GET | Get user profile |
 
 **Token Configuration:**
 - Access Token Lifetime: 60 minutes
@@ -140,18 +140,26 @@ For detailed authentication usage, see the [Testing Guide](HOW_TO_TEST.md).
 
 ## API Documentation
 
-### Core API Endpoints
+### API Versioning
+
+The API uses **URL path versioning** for clean and maintainable version management:
+- **Current Version**: `v1`
+- **Base URL**: `http://localhost:8000/api/v1/`
+- **Versioning Strategy**: Centralized at the project level to avoid repetitive URL prefixes
+- **Future Versions**: Easy to add (`v2`, `v3`, etc.) without breaking existing endpoints
+
+### Core API Endpoints (v1)
 
 | Endpoint | Method | Description | Auth Required |
 |----------|--------|-------------|---------------|
-| `/api/1.0/quizzes/` | GET | List user's accessible quizzes | ✅ |
-| `/api/1.0/quizzes/` | POST | Create a new quiz | ✅ |
-| `/api/1.0/quizzes/{quiz_id}/` | GET | Get quiz details | ✅ |
-| `/api/1.0/creators/{creator_id}/quizzes/` | GET | Get creator's quizzes | ✅ |
-| `/api/1.0/quizzes/{quiz_id}/invitations/` | POST | Send quiz invitation | ✅ |
-| `/api/1.0/invitations/{invitation_id}/accept/` | POST | Accept invitation | ✅ |
-| `/api/1.0/quizzes/{quiz_id}/submit/` | POST | Submit quiz answers | ✅ |
-| `/api/1.0/quizzes/{quiz_id}/scores/` | GET | Get quiz scores (creator only) | ✅ |
+| `/api/v1/quizzes/` | GET | List user's accessible quizzes | ✅ |
+| `/api/v1/quizzes/` | POST | Create a new quiz | ✅ |
+| `/api/v1/quizzes/{quiz_id}/` | GET | Get quiz details | ✅ |
+| `/api/v1/creators/{creator_id}/quizzes/` | GET | Get creator's quizzes | ✅ |
+| `/api/v1/quizzes/{quiz_id}/invitations/` | POST | Send quiz invitation | ✅ |
+| `/api/v1/invitations/{invitation_id}/accept/` | POST | Accept invitation | ✅ |
+| `/api/v1/quizzes/{quiz_id}/submit/` | POST | Submit quiz answers | ✅ |
+| `/api/v1/quizzes/{quiz_id}/scores/` | GET | Get quiz scores (creator only) | ✅ |
 
 For detailed API usage examples, request/response formats, and complete testing workflows, see the [Testing Guide](HOW_TO_TEST.md).
 
@@ -188,13 +196,6 @@ For detailed testing instructions, API usage examples, and complete testing work
 - **Input Validation**: Comprehensive request validation using Voluptuous
 - **SQL Injection Protection**: Django ORM built-in protection
 
-## Monitoring and Logging
-
-- **Django Logging**: Configured for development and production
-- **Celery Monitoring**: Task execution tracking
-- **Database Query Logging**: Performance monitoring
-- **Error Handling**: Comprehensive exception handling
-
 ## Deployment
 
 ### Production Considerations
@@ -202,6 +203,7 @@ For detailed testing instructions, API usage examples, and complete testing work
 - Configure proper `ALLOWED_HOSTS` (remove wildcard "*")
 - Use proper secret management (Kubernetes Secrets, HashiCorp Vault, AWS Secrets Manager, etc.)
 - Set up health checks and readiness probes
+- Use uWSGI as Python web server
 
 ## Additional Documentation
 
