@@ -1,0 +1,21 @@
+QUIZ INVITATION
+
+Hello {{ participant_name }}!
+
+{{ inviter_name }} has invited you to take the quiz: {{ quiz_title }}
+
+{% if quiz_description %}
+Quiz Description:
+{{ quiz_description }}
+{% endif %}
+
+{% if custom_message %}
+Personal Message:
+{{ custom_message }}
+{% endif %}
+
+To accept the invitation and start the quiz, please visit:
+{{ invitation_link }}
+
+---
+This is an automated email. Please do not reply. 

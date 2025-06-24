@@ -1,0 +1,54 @@
+[tool.black]
+line-length = 120
+target-version = ['py310']
+include = '\.pyi?$'
+exclude = '''
+/(
+  | \.git
+  | \.mypy_cache
+  | \.tox
+  | \.venv
+)/
+'''
+
+[tool.mypy]
+disallow_untyped_defs = true
+disallow_any_explicit = false
+disallow_any_generics = false
+no_implicit_optional = true
+show_error_codes = true
+strict_equality = true
+warn_return_any = true
+warn_unused_ignores = true
+ignore_missing_imports = false
+follow_imports = 'silent'
+
+mypy_path = 'src'
+namespace_packages = true
+explicit_package_bases = true
+
+exclude = [
+    'tests/',
+    '_dependency_injection/',
+    'migrations/',
+]
+
+[[tool.mypy.overrides]]
+ignore_missing_imports = true
+module = [
+    'django.*',
+    'djangorestframework.*',
+    'psycopg2',
+    'psycopg2.*',
+    'rest_framework.*',
+    'rest_framework_simplejwt.*',
+    'voluptuous.*',
+]
+
+[tool.pylint.messages_control]
+disable = """
+missing-module-docstring,
+missing-class-docstring,
+missing-function-docstring,
+line-too-long,
+"""

@@ -1,0 +1,9 @@
+[flake8]
+max-line-length = 120
+ignore = E203, W503, E231, E501, F821
+exclude =
+    src/*/migrations,
+    src/*/__init__.py,
+    models.py,
+    admin.py,
+    tasks.py,

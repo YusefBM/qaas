@@ -1,12 +1,96 @@
-version: '3.5'
-
 services:
-  django-backend:
+  db:
+    image: postgres:16
+    container_name: qaas-postgres
+    environment:
+      - POSTGRES_DB=${DB_NAME}
+      - POSTGRES_USER=${DB_USERNAME}
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+    volumes:
+      - db:/var/lib/postgresql/data/
+    healthcheck:
+      test: [ "CMD", "pg_isready", "-U", "${DB_USERNAME}", "-d", "${DB_NAME}"]
+      interval: 10s
+      retries: 5
+      start_period: 5s
+    restart: always
+    ports:
+      - "54321:${DB_PORT}"
+
+  redis:
+    image: redis:7-alpine
+    container_name: qaas-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: always
+
+  api:
+    container_name: qaas-api
     build:
       context: .
+      dockerfile: ./Dockerfile
+      target: production
     ports:
       - "8000:8000"
     volumes:
-        - '.:/usr/src:rw'
-    command: bash run_command.sh
+      - .:/app
+      - /app/staticfiles
+      - /app/media
     env_file: .env
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "python", "manage.py", "check"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  celery-worker:
+    container_name: qaas-celery-worker
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+      target: production
+    command: celery -A config worker --loglevel=info
+    volumes:
+      - .:/app
+    env_file: .env
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    restart: unless-stopped
+
+  celery-beat:
+    container_name: qaas-celery-beat
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+      target: production
+    command: celery -A config beat --loglevel=info
+    volumes:
+      - .:/app
+    env_file: .env
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    restart: unless-stopped
+
+volumes:
+  db:
+  redis:

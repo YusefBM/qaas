@@ -1,0 +1,1 @@
+# Send invitation application module

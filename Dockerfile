@@ -1,25 +1,52 @@
-FROM --platform=linux/amd64 python:3.10.13-slim
-# set work directory
-WORKDIR /usr/src
+FROM python:3.11.11-slim-bookworm as builder
 
-# set environment varibles
-ENV PYTHONDONTWRITEBYTECODE 1
-ENV PYTHONUNBUFFERED 1
+ENV PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1 \
+    PIP_NO_CACHE_DIR=1 \
+    PIP_DISABLE_PIP_VERSION_CHECK=1
 
-# install dependencies
 RUN apt-get update && apt-get install -y --no-install-recommends \
-    && pip install --upgrade pip \
-    && pip install pipenv
-
-COPY ./Pipfile /usr/src/Pipfile
-COPY ./Pipfile.lock /usr/src/Pipfile.lock
-
-# install Python dependencies
-RUN pipenv install --system --deploy --ignore-pipfile \
-    && apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false \
+    build-essential \
+    libpq-dev \
     && rm -rf /var/lib/apt/lists/*
 
-# copy project
-COPY . /usr/src
+RUN python -m venv /opt/venv
+ENV PATH="/opt/venv/bin:$PATH"
 
-RUN python manage.py collectstatic --noinput
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+
+FROM python:3.11.11-slim-bookworm as production
+
+ENV PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1 \
+    PATH="/opt/venv/bin:$PATH"
+
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    libpq5 \
+    && rm -rf /var/lib/apt/lists/* \
+    && apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false
+
+COPY --from=builder /opt/venv /opt/venv
+
+RUN groupadd -r django && useradd -r -g django django
+
+WORKDIR /app
+
+COPY --chown=django:django . .
+
+# Copy and make entrypoint script executable
+COPY --chown=django:django entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
+
+RUN chown -R django:django /app
+
+USER django
+
+EXPOSE 8000
+
+HEALTHCHECK --interval=30s --timeout=30s --start-period=5s --retries=3 \
+    CMD python manage.py check || exit 1
+
+ENTRYPOINT ["/entrypoint.sh"]
+CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]
