@@ -65,7 +65,7 @@ class TestGetQuizQueryHandler(unittest.TestCase):
         )
         self.mapper_mock.map_to_response.assert_called_once_with(quiz_data)
         self.participation_repository_mock.exists_by_quiz_and_participant.assert_not_called()
-        self.invitation_repository_mock.exists_by_quiz_and_participant.assert_not_called()
+        self.invitation_repository_mock.exists_by_quiz_and_invited.assert_not_called()
 
     def test_handle_success_with_participation(self):
         quiz_data = QuizData(
@@ -88,7 +88,7 @@ class TestGetQuizQueryHandler(unittest.TestCase):
         self.participation_repository_mock.exists_by_quiz_and_participant.assert_called_once_with(
             self.quiz_id, self.participant_id
         )
-        self.invitation_repository_mock.exists_by_quiz_and_participant.assert_not_called()
+        self.invitation_repository_mock.exists_by_quiz_and_invited.assert_not_called()
 
     def test_handle_success_with_invitation(self):
         quiz_data = QuizData(
@@ -103,7 +103,7 @@ class TestGetQuizQueryHandler(unittest.TestCase):
 
         self.quiz_finder_mock.find_quiz_for_participation.return_value = quiz_data
         self.participation_repository_mock.exists_by_quiz_and_participant.return_value = False
-        self.invitation_repository_mock.exists_by_quiz_and_participant.return_value = True
+        self.invitation_repository_mock.exists_by_quiz_and_invited.return_value = True
         self.mapper_mock.map_to_response.return_value = mock_response
 
         result = self.handler.handle(self.query)
@@ -112,8 +112,8 @@ class TestGetQuizQueryHandler(unittest.TestCase):
         self.participation_repository_mock.exists_by_quiz_and_participant.assert_called_once_with(
             self.quiz_id, self.participant_id
         )
-        self.invitation_repository_mock.exists_by_quiz_and_participant.assert_called_once_with(
-            self.quiz_id, self.participant_id
+        self.invitation_repository_mock.exists_by_quiz_and_invited.assert_called_once_with(
+            quiz_id=self.quiz_id, invited_id=self.participant_id
         )
 
     def test_handle_unauthorized_access_raises_exception(self):
@@ -127,7 +127,7 @@ class TestGetQuizQueryHandler(unittest.TestCase):
 
         self.quiz_finder_mock.find_quiz_for_participation.return_value = quiz_data
         self.participation_repository_mock.exists_by_quiz_and_participant.return_value = False
-        self.invitation_repository_mock.exists_by_quiz_and_participant.return_value = False
+        self.invitation_repository_mock.exists_by_quiz_and_invited.return_value = False
 
         with self.assertRaises(UnauthorizedQuizAccessException) as context:
             self.handler.handle(self.query)
@@ -138,8 +138,8 @@ class TestGetQuizQueryHandler(unittest.TestCase):
         self.participation_repository_mock.exists_by_quiz_and_participant.assert_called_once_with(
             self.quiz_id, self.participant_id
         )
-        self.invitation_repository_mock.exists_by_quiz_and_participant.assert_called_once_with(
-            self.quiz_id, self.participant_id
+        self.invitation_repository_mock.exists_by_quiz_and_invited.assert_called_once_with(
+            quiz_id=self.quiz_id, invited_id=self.participant_id
         )
         self.mapper_mock.map_to_response.assert_not_called()
 
@@ -161,7 +161,7 @@ class TestGetQuizQueryHandler(unittest.TestCase):
 
         self.assertEqual(result, mock_response)
         self.participation_repository_mock.exists_by_quiz_and_participant.assert_not_called()
-        self.invitation_repository_mock.exists_by_quiz_and_participant.assert_not_called()
+        self.invitation_repository_mock.exists_by_quiz_and_invited.assert_not_called()
 
     def test_handle_complex_quiz_with_multiple_questions(self):
         answer1 = AnswerData(answer_id=UUID("11111111-1111-1111-1111-111111111111"), text="Option A", order=1)
@@ -222,7 +222,7 @@ class TestGetQuizQueryHandler(unittest.TestCase):
         self.participation_repository_mock.exists_by_quiz_and_participant.assert_called_once_with(
             self.quiz_id, self.participant_id
         )
-        self.invitation_repository_mock.exists_by_quiz_and_participant.assert_not_called()
+        self.invitation_repository_mock.exists_by_quiz_and_invited.assert_not_called()
 
     def test_handle_neither_participation_nor_invitation_exists(self):
         quiz_data = QuizData(
@@ -235,7 +235,7 @@ class TestGetQuizQueryHandler(unittest.TestCase):
 
         self.quiz_finder_mock.find_quiz_for_participation.return_value = quiz_data
         self.participation_repository_mock.exists_by_quiz_and_participant.return_value = False
-        self.invitation_repository_mock.exists_by_quiz_and_participant.return_value = False
+        self.invitation_repository_mock.exists_by_quiz_and_invited.return_value = False
 
         with self.assertRaises(UnauthorizedQuizAccessException):
             self.handler.handle(self.query)
@@ -243,8 +243,8 @@ class TestGetQuizQueryHandler(unittest.TestCase):
         self.participation_repository_mock.exists_by_quiz_and_participant.assert_called_once_with(
             self.quiz_id, self.participant_id
         )
-        self.invitation_repository_mock.exists_by_quiz_and_participant.assert_called_once_with(
-            self.quiz_id, self.participant_id
+        self.invitation_repository_mock.exists_by_quiz_and_invited.assert_called_once_with(
+           quiz_id=self.quiz_id, invited_id=self.participant_id
         )
 
     def test_handle_different_participant_id(self):

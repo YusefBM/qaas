@@ -40,7 +40,7 @@ class SubmitQuizAnswersCommandHandler:
         participation = self.__participation_repository.find_or_fail_by_quiz_and_participant(quiz, participant)
 
         if participation.is_completed():
-            raise QuizAlreadyCompletedException(quiz_id=command.quiz_id)
+            raise QuizAlreadyCompletedException(quiz_id=command.quiz_id, user_id=command.participant_id)
 
         if len(command.answers) != quiz.total_questions:
             raise IncompleteQuizSubmissionException(

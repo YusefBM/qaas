@@ -212,10 +212,10 @@ class TestGetUserQuizzesQueryHandler(unittest.TestCase):
 
         self.assertIsInstance(result_dict, dict)
         self.assertEqual(result_dict["total_count"], 1)
-        self.assertIn("participations", result_dict)
-        self.assertEqual(len(result_dict["participations"]), 1)
+        self.assertIn("user_quizzes", result_dict)
+        self.assertEqual(len(result_dict["user_quizzes"]), 1)
 
-        participation_dict = result_dict["participations"][0]
+        participation_dict = result_dict["user_quizzes"][0]
         self.assertEqual(participation_dict["quiz_id"], str(self.quiz_id_1))
         self.assertEqual(participation_dict["quiz_title"], "Dict Test Quiz")
         self.assertEqual(participation_dict["score"], 95)
