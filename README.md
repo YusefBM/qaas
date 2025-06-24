@@ -48,6 +48,109 @@ The project follows **Clean Architecture** principles with:
 - **Domain-Driven Design**: Aggregates, repositories, and domain services
 - **Dependency Injection**: Factory pattern for loose coupling
 
+### Database Schema (Entity Relationship Diagram)
+
+The following ERD shows the Django models and their relationships:
+
+```mermaid
+erDiagram
+    User {
+        UUID id PK
+        string username
+        string email
+        string first_name
+        string last_name
+        datetime date_joined
+        boolean is_active
+        boolean is_staff
+        boolean is_superuser
+    }
+
+    Quiz {
+        UUID id PK
+        string title
+        text description
+        UUID creator_id FK
+        datetime created_at
+        datetime updated_at
+    }
+
+    Question {
+        int id PK
+        UUID quiz_id FK
+        text text
+        int order
+        int points
+        datetime created_at
+    }
+
+    Answer {
+        int id PK
+        int question_id FK
+        string text
+        boolean is_correct
+        int order
+    }
+
+    Invitation {
+        UUID id PK
+        UUID quiz_id FK
+        UUID invited_id FK
+        UUID inviter_id FK
+        datetime invited_at
+        datetime accepted_at
+    }
+
+    Participation {
+        UUID id PK
+        UUID quiz_id FK
+        UUID participant_id FK
+        UUID invitation_id FK
+        int score
+        datetime completed_at
+        datetime created_at
+    }
+
+    AnswerSubmission {
+        int id PK
+        UUID participation_id FK
+        int question_id FK
+        int selected_answer_id FK
+        datetime submitted_at
+    }
+
+    %% Relationships
+    User ||--o{ Quiz : "creates (creator)"
+    Quiz ||--o{ Question : "has"
+    Question ||--o{ Answer : "has"
+    
+    User ||--o{ Invitation : "receives (invited)"
+    User ||--o{ Invitation : "sends (inviter)"
+    Quiz ||--o{ Invitation : "for"
+    
+    Quiz ||--o{ Participation : "in"
+    User ||--o{ Participation : "participates"
+    Invitation ||--o| Participation : "leads to"
+    
+    Participation ||--o{ AnswerSubmission : "submits"
+    Question ||--o{ AnswerSubmission : "answered in"
+    Answer ||--o{ AnswerSubmission : "selected as"
+```
+
+**Key Relationships:**
+- **User** is the central entity that can create quizzes, send/receive invitations, and participate in quizzes
+- **Quiz** contains multiple **Questions**, each with multiple **Answers**
+- **Invitation** connects users to quizzes (inviter → invited → quiz)
+- **Participation** tracks a user's involvement in a quiz (linked to invitation)
+- **AnswerSubmission** records each answer a participant submits
+
+**Design Patterns:**
+- **UUID primary keys** for most entities (except Question/Answer)
+- **Soft relationships** using PROTECT for critical foreign keys
+- **Unique constraints** to prevent duplicates
+- **Audit fields** with created_at/updated_at timestamps
+- **Status tracking** through nullable fields (accepted_at, completed_at)
+
 ## Getting Started
 
 ### Prerequisites
