@@ -2,6 +2,7 @@ from django.db import models
 from django.utils import timezone
 from uuid_utils.compat import uuid7
 
+from quiz.domain.invitation.invitation import Invitation
 from quiz.domain.participation.participation_status import ParticipationStatus
 from quiz.domain.quiz.quiz import Quiz
 from user.domain.user import User
@@ -14,7 +15,7 @@ class Participation(models.Model):
     quiz = models.ForeignKey(Quiz, on_delete=models.PROTECT, related_name="participations")
     participant = models.ForeignKey(User, on_delete=models.PROTECT, related_name="quiz_participations")
     invitation = models.ForeignKey(
-        "quiz.Invitation", on_delete=models.PROTECT, related_name="participation", null=True, blank=True
+        Invitation, on_delete=models.PROTECT, related_name="participation", null=True, blank=True
     )
     score = models.PositiveIntegerField(null=True, blank=True)
     completed_at = models.DateTimeField(null=True, blank=True)

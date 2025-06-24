@@ -244,7 +244,7 @@ class TestGetQuizQueryHandler(unittest.TestCase):
             self.quiz_id, self.participant_id
         )
         self.invitation_repository_mock.exists_by_quiz_and_invited.assert_called_once_with(
-           quiz_id=self.quiz_id, invited_id=self.participant_id
+            quiz_id=self.quiz_id, invited_id=self.participant_id
         )
 
     def test_handle_different_participant_id(self):

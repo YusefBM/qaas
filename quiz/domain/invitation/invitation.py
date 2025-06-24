@@ -9,6 +9,8 @@ from user.domain.user import User
 
 
 class Invitation(models.Model):
+    __UTC_DATETIME_FORMAT = "%Y-%m-%dT%H:%M:%S.%fZ"
+
     id = models.UUIDField(primary_key=True, default=uuid7)
     quiz = models.ForeignKey(Quiz, on_delete=models.PROTECT, related_name="invitations")
     invited = models.ForeignKey(User, on_delete=models.PROTECT, related_name="user_invitations")
@@ -27,3 +29,6 @@ class Invitation(models.Model):
 
     def accept(self) -> None:
         self.accepted_at = timezone.now()
+
+    def get_formatted_invited_at(self) -> str:
+        return self.invited_at.strftime(self.__UTC_DATETIME_FORMAT)

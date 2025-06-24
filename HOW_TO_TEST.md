@@ -177,6 +177,14 @@ curl -X POST http://localhost:8000/api/v1/quizzes/QUIZ_UUID/submit/ \
   }'
 ```
 
+#### 4.2 Get My Quiz Progress (as Participant)
+This endpoint allows participants to check their own progress and results for a specific quiz.
+
+```bash
+curl -X GET http://localhost:8000/api/v1/quizzes/QUIZ_UUID/progress/ \
+  -H "Authorization: Bearer YOUR_PARTICIPANT_ACCESS_TOKEN"
+```
+
 
 ### 5. Quiz Results
 
@@ -185,6 +193,15 @@ curl -X POST http://localhost:8000/api/v1/quizzes/QUIZ_UUID/submit/ \
 curl -X GET http://localhost:8000/api/v1/quizzes/QUIZ_UUID/scores/ \
   -H "Authorization: Bearer YOUR_CREATOR_ACCESS_TOKEN"
 ```
+
+#### 5.2 Get Creator Quiz Progress (as Creator)
+This endpoint provides comprehensive progress metrics for quiz creators to monitor their quiz performance.
+
+```bash
+curl -X GET http://localhost:8000/api/v1/quizzes/QUIZ_UUID/creator-progress/ \
+  -H "Authorization: Bearer YOUR_CREATOR_ACCESS_TOKEN"
+```
+
 
 
 ### 6. Authentication Management
@@ -247,6 +264,14 @@ curl -X POST http://localhost:8000/api/v1/quizzes/$QUIZ_ID/invitations/ \
   -H "Content-Type: application/json" \
   -H "Authorization: Bearer $CREATOR_TOKEN" \
   -d '{"participant_email": "participant@example.com"}'
+
+# Example: Get creator quiz progress
+curl -X GET http://localhost:8000/api/v1/quizzes/$QUIZ_ID/creator-progress/ \
+  -H "Authorization: Bearer $CREATOR_TOKEN"
+
+# Example: Get my quiz progress as participant
+curl -X GET http://localhost:8000/api/v1/quizzes/$QUIZ_ID/progress/ \
+  -H "Authorization: Bearer $PARTICIPANT_TOKEN"
 ```
 
 ## Complete Testing Scenario
@@ -272,10 +297,13 @@ Here's a complete end-to-end testing scenario:
 1. Get quiz details using participant's token (should now have access)
 2. Submit answers using participant's token
 3. Verify submission response
+4. Check participant's own progress and score
 
-### Step 5: Results
+### Step 5: Results and Progress Monitoring
 1. Get quiz scores using creator's token
 2. Verify participant's score is listed
+3. Get creator quiz progress to monitor invitation and participation metrics
+4. Verify invitation acceptance rate and completion statistics
 
 ## Error Handling
 

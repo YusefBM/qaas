@@ -8,6 +8,8 @@ A Django-based Quiz-as-a-Service platform that allows users to create, manage, a
 - ✅ Create quizzes with multiple-choice questions
 - ✅ Send quiz invitations via email
 - ✅ View quiz scores and participant statistics
+- ✅ Monitor quiz progress and completion rates
+- ✅ Track invitation acceptance rates
 - ✅ Manage created quizzes
 - ✅ Asynchronous email delivery with Celery
 
@@ -15,7 +17,8 @@ A Django-based Quiz-as-a-Service platform that allows users to create, manage, a
 - ✅ Accept quiz invitations
 - ✅ Participate in invited quizzes
 - ✅ Submit quiz answers
-- ✅ View personal quiz results
+- ✅ View personal quiz results and progress
+- ✅ Track completion status and scores
 - ✅ Access quizzes through invitation links
 
 ### Admin Interface
@@ -158,7 +161,9 @@ The API uses **URL path versioning** for clean and maintainable version manageme
 | `/api/v1/quizzes/{quiz_id}/invitations/` | POST | Send quiz invitation | ✅ |
 | `/api/v1/invitations/{invitation_id}/accept/` | POST | Accept invitation | ✅ |
 | `/api/v1/quizzes/{quiz_id}/submit/` | POST | Submit quiz answers | ✅ |
+| `/api/v1/quizzes/{quiz_id}/progress/` | GET | Get my quiz progress (participant) | ✅ |
 | `/api/v1/quizzes/{quiz_id}/scores/` | GET | Get quiz scores (creator only) | ✅ |
+| `/api/v1/quizzes/{quiz_id}/creator-progress/` | GET | Get creator quiz progress | ✅ |
 
 For detailed API usage examples, request/response formats, and complete testing workflows, see the [Testing Guide](HOW_TO_TEST.md).
 

@@ -47,3 +47,7 @@ class Quiz(models.Model):
     @property
     def total_participants(self) -> int:
         return self.participations.count() if hasattr(self, "participations") else 0
+
+    @property
+    def total_possible_points(self) -> int:
+        return sum(question.points for question in self.questions.all())
