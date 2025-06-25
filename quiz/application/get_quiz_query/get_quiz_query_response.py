@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from typing import List, Dict, Any
+from typing import Any
 from uuid import UUID
 
 
@@ -9,7 +9,7 @@ class QuizAnswer:
     text: str
     order: int
 
-    def as_dict(self) -> Dict[str, Any]:
+    def as_dict(self) -> dict[str, Any]:
         return {
             "answer_id": str(self.answer_id),
             "text": self.text,
@@ -22,9 +22,9 @@ class QuizQuestion:
     question_id: UUID
     text: str
     order: int
-    answers: List[QuizAnswer]
+    answers: list[QuizAnswer]
 
-    def as_dict(self) -> Dict[str, Any]:
+    def as_dict(self) -> dict[str, Any]:
         return {
             "question_id": str(self.question_id),
             "text": self.text,
@@ -38,9 +38,9 @@ class GetQuizQueryResponse:
     quiz_id: UUID
     title: str
     description: str
-    questions: List[QuizQuestion]
+    questions: list[QuizQuestion]
 
-    def as_dict(self) -> Dict[str, Any]:
+    def as_dict(self) -> dict[str, Any]:
         return {
             "quiz_id": str(self.quiz_id),
             "title": self.title,

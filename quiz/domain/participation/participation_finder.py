@@ -1,9 +1,8 @@
 from abc import ABC, abstractmethod
-from typing import Optional
 from uuid import UUID
 
-from quiz.domain.participation.quiz_scores_summary import QuizScoresSummary
 from quiz.domain.participation.quiz_progress_summary import QuizProgressSummary
+from quiz.domain.participation.quiz_scores_summary import QuizScoresSummary
 from quiz.domain.participation.user_participation_data import UserParticipationData
 
 
@@ -17,5 +16,5 @@ class ParticipationFinder(ABC):
         pass
 
     @abstractmethod
-    def find_user_participation_for_quiz(self, quiz_id: UUID, user_id: UUID) -> Optional[UserParticipationData]:
+    def find_user_participation_for_quiz(self, quiz_id: UUID, user_id: UUID) -> UserParticipationData | None:
         pass

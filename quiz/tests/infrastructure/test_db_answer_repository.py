@@ -201,39 +201,3 @@ class TestDbAnswerRepository(unittest.TestCase):
 
         with self.assertRaises(AnswerAlreadyExistsException):
             self.repository.bulk_save(answers)
-
-    def test_is_unique_constraint_violation_returns_true_for_question_order_constraint(self):
-        mock_constraint_diag = Mock()
-        mock_constraint_diag.constraint_name = "quiz_answer_question_id_order"
-
-        class MockCause(Exception):
-            def __init__(self):
-                super().__init__("Database constraint violation")
-                self.diag = mock_constraint_diag
-
-        mock_cause = MockCause()
-
-        integrity_error = IntegrityError("UNIQUE constraint failed")
-        integrity_error.__cause__ = mock_cause
-
-        result = self.repository._is_unique_constraint_violation(integrity_error)
-
-        self.assertTrue(result)
-
-    def test_is_unique_constraint_violation_returns_false_for_other_constraints(self):
-        mock_constraint_diag = Mock()
-        mock_constraint_diag.constraint_name = "some_other_constraint"
-
-        class MockCause(Exception):
-            def __init__(self):
-                super().__init__("Other database constraint violation")
-                self.diag = mock_constraint_diag
-
-        mock_cause = MockCause()
-
-        integrity_error = IntegrityError("Other constraint failed")
-        integrity_error.__cause__ = mock_cause
-
-        result = self.repository._is_unique_constraint_violation(integrity_error)
-
-        self.assertFalse(result)

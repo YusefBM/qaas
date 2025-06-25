@@ -35,7 +35,7 @@ env = environ.Env(
     # Email Configuration
     EMAIL_BACKEND=(str, ""),
     EMAIL_HOST=(str, ""),
-    EMAIL_PORT=(int, 587),
+    EMAIL_PORT=(int, None),
     EMAIL_USE_TLS=(bool, True),
     EMAIL_HOST_USER=(str, ""),
     EMAIL_HOST_PASSWORD=(str, ""),
@@ -213,8 +213,6 @@ EMAIL_BACKEND = env("EMAIL_BACKEND")
 EMAIL_HOST = env("EMAIL_HOST")
 EMAIL_PORT = env("EMAIL_PORT")
 EMAIL_USE_TLS = env("EMAIL_USE_TLS")
-EMAIL_HOST_USER = env("EMAIL_HOST_USER")
-EMAIL_HOST_PASSWORD = env("EMAIL_HOST_PASSWORD")
 DEFAULT_FROM_EMAIL = env("DEFAULT_FROM_EMAIL")
 
 # Base URL for generating links

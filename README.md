@@ -101,7 +101,7 @@ erDiagram
         datetime accepted_at
     }
 
-    Participation {
+    ParticipationData {
         UUID id PK
         UUID quiz_id FK
         UUID participant_id FK
@@ -128,11 +128,11 @@ erDiagram
     User ||--o{ Invitation : "sends (inviter)"
     Quiz ||--o{ Invitation : "for"
     
-    Quiz ||--o{ Participation : "in"
-    User ||--o{ Participation : "participates"
-    Invitation ||--o| Participation : "leads to"
+    Quiz ||--o{ ParticipationData : "in"
+    User ||--o{ ParticipationData : "participates"
+    Invitation ||--o| ParticipationData : "leads to"
     
-    Participation ||--o{ AnswerSubmission : "submits"
+    ParticipationData ||--o{ AnswerSubmission : "submits"
     Question ||--o{ AnswerSubmission : "answered in"
     Answer ||--o{ AnswerSubmission : "selected as"
 ```
@@ -141,7 +141,7 @@ erDiagram
 - **User** is the central entity that can create quizzes, send/receive invitations, and participate in quizzes
 - **Quiz** contains multiple **Questions**, each with multiple **Answers**
 - **Invitation** connects users to quizzes (inviter → invited → quiz)
-- **Participation** tracks a user's involvement in a quiz (linked to invitation)
+- **ParticipationData** tracks a user's involvement in a quiz (linked to invitation)
 - **AnswerSubmission** records each answer a participant submits
 
 **Design Patterns:**
@@ -206,6 +206,11 @@ make migrate app=quiz migration=0001
 # View all available commands
 make help
 ```
+
+### Redo env and/or reapply database migrations
+
+If you need to totally drop your environment and recreate it from scratch or reapply the DB migrations,
+run `make refresh-env`. 
 
 ### Code Quality Commands
 

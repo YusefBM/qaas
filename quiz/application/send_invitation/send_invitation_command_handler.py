@@ -57,6 +57,6 @@ class SendInvitationCommandHandler:
             invitation_id=str(invitation.id),
             quiz_title=quiz.title,
             participant_email=command.participant_email,
-            invited_at=invitation.invited_at,
+            invited_at=invitation.get_formatted_invited_at(),
             invitation_acceptance_link=invitation_acceptance_link,
         )

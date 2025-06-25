@@ -10,9 +10,5 @@ class QuestionRepository(ABC):
         pass
 
     @abstractmethod
-    def find_by_id(self, question_id: int) -> Question | None:
-        pass
-
-    @abstractmethod
     def find_by_ids(self, question_ids: list[int]) -> Dict[int, Question]:
         pass

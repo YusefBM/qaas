@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from typing import Dict, Any
+from typing import Any
 
 
 @dataclass(frozen=True)
@@ -9,7 +9,7 @@ class InvitationStats:
     acceptance_rate: float
     pending_invitations: int
 
-    def as_dict(self) -> Dict[str, Any]:
+    def as_dict(self) -> dict[str, Any]:
         return {
             "total_sent": self.total_sent,
             "total_accepted": self.total_accepted,
@@ -24,7 +24,7 @@ class ParticipationStats:
     completed_participants: int
     completion_rate: float
 
-    def as_dict(self) -> Dict[str, Any]:
+    def as_dict(self) -> dict[str, Any]:
         return {
             "total_participants": self.total_participants,
             "completed_participants": self.completed_participants,
@@ -42,7 +42,7 @@ class GetCreatorQuizProgressResponse:
     invitation_stats: InvitationStats
     participation_stats: ParticipationStats
 
-    def as_dict(self) -> Dict[str, Any]:
+    def as_dict(self) -> dict[str, Any]:
         return {
             "quiz_id": self.quiz_id,
             "quiz_title": self.quiz_title,

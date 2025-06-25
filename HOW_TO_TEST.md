@@ -156,7 +156,7 @@ curl -X POST http://localhost:8000/api/v1/invitations/INVITATION_UUID/accept/ \
   -H "Authorization: Bearer YOUR_PARTICIPANT_ACCESS_TOKEN"
 ```
 
-### 4. Quiz Participation
+### 4. Quiz ParticipationData
 
 #### 4.1 Submit Quiz Answers (as Participant)
 ```bash
@@ -293,7 +293,7 @@ Here's a complete end-to-end testing scenario:
 2. Save invitation UUID from response
 3. Accept invitation using participant's token
 
-### Step 4: Quiz Participation
+### Step 4: Quiz ParticipationData
 1. Get quiz details using participant's token (should now have access)
 2. Submit answers using participant's token
 3. Verify submission response

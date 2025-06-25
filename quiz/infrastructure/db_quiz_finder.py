@@ -10,10 +10,10 @@ class DbQuizFinder(QuizFinder):
     def find_quiz_for_participation(self, quiz_id: UUID, participant_id: UUID) -> QuizData:
         try:
             quiz = Quiz.objects.prefetch_related("questions__answers").get(id=quiz_id)
-        except Quiz.DoesNotExist:
-            raise QuizNotFoundException(quiz_id=str(quiz_id))
+        except Quiz.DoesNotExist as e:
+            raise QuizNotFoundException(quiz_id=str(quiz_id)) from e
 
-        questions = self._build_questions_from_quiz(quiz)
+        questions = self.__build_questions_from_quiz(quiz)
 
         return QuizData(
             quiz_id=quiz.id,
@@ -23,7 +23,7 @@ class DbQuizFinder(QuizFinder):
             questions=questions,
         )
 
-    def _build_questions_from_quiz(self, quiz: Quiz) -> list[QuestionData]:
+    def __build_questions_from_quiz(self, quiz: Quiz) -> list[QuestionData]:
         questions = []
 
         for question in quiz.questions.all().order_by("order"):

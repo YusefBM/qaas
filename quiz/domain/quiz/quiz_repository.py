@@ -16,7 +16,3 @@ class QuizRepository(ABC):
     @abstractmethod
     def find_by_creator_id(self, creator_id: UUID) -> list[Quiz]:
         pass
-
-    @abstractmethod
-    def find_by_participant_id(self, participant_id: UUID) -> list[Quiz]:
-        pass

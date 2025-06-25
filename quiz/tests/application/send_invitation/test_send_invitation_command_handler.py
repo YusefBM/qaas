@@ -69,6 +69,7 @@ class TestSendInvitationCommandHandler(unittest.TestCase):
         mock_invitation = Mock(spec=Invitation)
         mock_invitation.id = self.invitation_id
         mock_invitation.invited_at = datetime(2024, 1, 15, 10, 30, 0)
+        mock_invitation.get_formatted_invited_at.return_value = "2024-01-15T10:30:00.000000Z"
 
         mock_uuid7.return_value = self.invitation_id
         mock_invitation_class.return_value = mock_invitation
@@ -84,7 +85,7 @@ class TestSendInvitationCommandHandler(unittest.TestCase):
         self.assertEqual(result.invitation_id, str(self.invitation_id))
         self.assertEqual(result.quiz_title, "JavaScript Fundamentals")
         self.assertEqual(result.participant_email, "participant@example.com")
-        self.assertEqual(result.invited_at, datetime(2024, 1, 15, 10, 30, 0))
+        self.assertEqual(result.invited_at, "2024-01-15T10:30:00.000000Z")
         self.assertEqual(
             result.invitation_acceptance_link, f"https://example.com/invitations/{self.invitation_id}/accept"
         )
@@ -195,7 +196,8 @@ class TestSendInvitationCommandHandler(unittest.TestCase):
         mock_participant = Mock(spec=User)
         mock_invitation = Mock(spec=Invitation)
         mock_invitation.id = self.invitation_id
-        mock_invitation.invited_at = datetime.now()
+        mock_invitation.invited_at = datetime(2024, 1, 15, 10, 30, 0)
+        mock_invitation.get_formatted_invited_at.return_value = "2024-01-15T10:30:00.000000Z"
 
         mock_uuid7.return_value = self.invitation_id
         mock_invitation_class.return_value = mock_invitation
@@ -239,7 +241,8 @@ class TestSendInvitationCommandHandler(unittest.TestCase):
         mock_participant = Mock(spec=User)
         mock_invitation = Mock(spec=Invitation)
         mock_invitation.id = self.invitation_id
-        mock_invitation.invited_at = datetime.now()
+        mock_invitation.invited_at = datetime(2024, 1, 15, 10, 30, 0)
+        mock_invitation.get_formatted_invited_at.return_value = "2024-01-15T10:30:00.000000Z"
 
         mock_uuid7.return_value = self.invitation_id
         mock_invitation_class.return_value = mock_invitation

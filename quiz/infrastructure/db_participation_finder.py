@@ -1,4 +1,3 @@
-from typing import Optional
 from uuid import UUID
 
 from django.db.models import Count, Avg, Q, Max, Min, FloatField
@@ -47,7 +46,7 @@ class DbParticipationFinder(ParticipationFinder):
             top_scorer_email=top_scorer_participation.participant.email if top_scorer_participation else None,
         )
 
-    def find_user_participation_for_quiz(self, quiz_id: UUID, user_id: UUID) -> Optional[UserParticipationData]:
+    def find_user_participation_for_quiz(self, quiz_id: UUID, user_id: UUID) -> UserParticipationData | None:
         try:
             participation = Participation.objects.select_related("invitation").get(
                 quiz_id=quiz_id, participant_id=user_id
@@ -64,7 +63,7 @@ class DbParticipationFinder(ParticipationFinder):
                 invited_at=invited_at,
                 started_at=started_at,
                 completed_at=participation.get_formatted_completed_at(),
-                my_score=participation.score,
+                score=participation.score,
             )
         except Participation.DoesNotExist:
             return None

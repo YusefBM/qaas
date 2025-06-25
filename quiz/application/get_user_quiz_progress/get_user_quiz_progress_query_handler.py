@@ -4,7 +4,7 @@ from uuid import UUID
 from quiz.application.get_user_quiz_progress.get_user_quiz_progress_query import GetUserQuizProgressQuery
 from quiz.application.get_user_quiz_progress.get_user_quiz_progress_response import (
     GetUserQuizProgressResponse,
-    Participation,
+    ParticipationData,
 )
 from quiz.domain.participation.participation_finder import ParticipationFinder
 from quiz.domain.participation.participation_not_found_for_user_exception import ParticipationNotFoundForUserException
@@ -31,20 +31,19 @@ class GetUserQuizProgressQueryHandler:
         user_participation = self.__participation_finder.find_user_participation_for_quiz(
             quiz_id=UUID(query.quiz_id), user_id=UUID(query.requester_id)
         )
-
         if user_participation is None:
             raise ParticipationNotFoundForUserException(quiz_id=query.quiz_id, user_id=query.requester_id)
 
         score_percentage = None
-        if user_participation.my_score is not None and quiz.total_possible_points > 0:
-            score_percentage = (user_participation.my_score / quiz.total_possible_points) * 100
+        if user_participation.score is not None and quiz.total_possible_points > 0:
+            score_percentage = (user_participation.score / quiz.total_possible_points) * 100
 
-        my_participation = Participation(
+        participation = ParticipationData(
             status=user_participation.status,
             invited_at=user_participation.invited_at,
             completed_at=user_participation.completed_at,
-            my_score=user_participation.my_score,
-            score_percentage=score_percentage,
+            score=user_participation.score,
+            score_percentage=round(score_percentage, 2) if score_percentage is not None else None,
         )
 
         self.__logger.info(
@@ -58,5 +57,5 @@ class GetUserQuizProgressQueryHandler:
             total_questions=quiz.total_questions,
             total_possible_points=quiz.total_possible_points,
             quiz_created_at=quiz.get_formatted_created_at(),
-            my_participation=my_participation,
+            participation=participation,
         )

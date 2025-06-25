@@ -12,13 +12,13 @@ class DbAnswerSubmissionRepository(AnswerSubmissionRepository):
         try:
             answer_submission.save()
         except IntegrityError as exc:
-            if self._is_unique_constraint_violation(exc):
-                raise DuplicateAnswerSubmissionException(question_id=answer_submission.question.id)
+            if self.__is_unique_constraint_violation(exc):
+                raise DuplicateAnswerSubmissionException(question_id=answer_submission.question.id) from exc
             raise exc
 
     def bulk_save(self, answer_submissions: list[AnswerSubmission]) -> None:
         for answer_submission in answer_submissions:
             self.save(answer_submission)
 
-    def _is_unique_constraint_violation(self, exc: IntegrityError) -> bool:
+    def __is_unique_constraint_violation(self, exc: IntegrityError) -> bool:
         return self.__UNIQUE_CONSTRAINT_PARTICIPATION_AND_QUESTION in exc.__cause__.diag.constraint_name

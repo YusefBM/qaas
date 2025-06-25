@@ -50,7 +50,7 @@ class AcceptInvitationCommandHandler:
 
         self.__logger.info(
             f"Invitation accepted successfully. Invitation ID: '{command.invitation_id}', "
-            f"Participation created with ID: {participation.id}"
+            f"ParticipationData created with ID: {participation.id}"
         )
 
         return AcceptInvitationResponse(

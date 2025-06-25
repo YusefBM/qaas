@@ -250,7 +250,7 @@ class TestDbParticipationFinder(unittest.TestCase):
         self.assertEqual(result.invited_at, "2024-01-15T10:30:00.000000Z")
         self.assertEqual(result.started_at, "2024-01-15T11:00:00.000000Z")
         self.assertEqual(result.completed_at, "2024-01-16T14:20:00.000000Z")
-        self.assertEqual(result.my_score, 85)
+        self.assertEqual(result.score, 85)
 
         mock_objects.select_related.assert_called_once_with("invitation")
         mock_objects.select_related.return_value.get.assert_called_once_with(
@@ -277,7 +277,7 @@ class TestDbParticipationFinder(unittest.TestCase):
         self.assertEqual(result.invited_at, None)
         self.assertEqual(result.started_at, "2024-01-20T11:00:00.000000Z")
         self.assertEqual(result.completed_at, None)
-        self.assertEqual(result.my_score, None)
+        self.assertEqual(result.score, None)
 
     @patch("quiz.domain.participation.participation.Participation.objects")
     def test_find_user_participation_for_quiz_not_found(self, mock_objects):

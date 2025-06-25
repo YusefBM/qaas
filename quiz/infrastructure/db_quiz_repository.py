@@ -1,4 +1,3 @@
-from typing import List
 from uuid import UUID
 
 from django.db import IntegrityError
@@ -16,23 +15,18 @@ class DbQuizRepository(QuizRepository):
         try:
             quiz.save()
         except IntegrityError as exc:
-            if self._is_unique_constraint_violation(exc):
-                raise QuizAlreadyExistsException(title=quiz.title, creator_id=quiz.creator_id)
+            if self.__is_unique_constraint_violation(exc):
+                raise QuizAlreadyExistsException(title=quiz.title, creator_id=quiz.creator_id) from exc
             raise exc
 
     def find_or_fail_by_id(self, quiz_id: UUID) -> Quiz:
         try:
             return Quiz.objects.get(id=quiz_id)
-        except Quiz.DoesNotExist:
-            raise QuizNotFoundException(quiz_id=str(quiz_id))
+        except Quiz.DoesNotExist as e:
+            raise QuizNotFoundException(quiz_id=str(quiz_id)) from e
 
-    def find_by_creator_id(self, creator_id: UUID) -> List[Quiz]:
+    def find_by_creator_id(self, creator_id: UUID) -> list[Quiz]:
         return list(Quiz.objects.filter(creator_id=creator_id).order_by("-created_at"))
 
-    def find_by_participant_id(self, participant_id: UUID) -> List[Quiz]:
-        return list(
-            Quiz.objects.filter(participations__participant_id=participant_id).distinct().order_by("-created_at")
-        )
-
-    def _is_unique_constraint_violation(self, exc: IntegrityError) -> bool:
+    def __is_unique_constraint_violation(self, exc: IntegrityError) -> bool:
         return self.__UNIQUE_CONSTRAINT_TITLE_AND_CREATOR in exc.__cause__.diag.constraint_name

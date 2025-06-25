@@ -20,22 +20,26 @@ class TestGetCreatorQuizzesQueryHandler(unittest.TestCase):
 
     def test_handle_success_with_multiple_quizzes(self):
         quiz1 = Mock(spec=Quiz)
-        quiz1.id = UUID("11111111-1111-1111-1111-111111111111")
+        quiz1.id = UUID("aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee")
         quiz1.title = "JavaScript Basics"
         quiz1.description = "Test your JavaScript knowledge"
         quiz1.total_questions = 10
         quiz1.total_participants = 25
         quiz1.created_at = datetime(2023, 1, 15, 10, 30, 0, 123456)
         quiz1.updated_at = datetime(2023, 1, 16, 14, 45, 0, 654321)
+        quiz1.get_formatted_created_at.return_value = "2023-01-15T10:30:00.123456Z"
+        quiz1.get_formatted_updated_at.return_value = "2023-01-16T14:45:00.654321Z"
 
         quiz2 = Mock(spec=Quiz)
-        quiz2.id = UUID("22222222-2222-2222-2222-222222222222")
+        quiz2.id = UUID("bbbbbbbb-cccc-dddd-eeee-ffffffffffff")
         quiz2.title = "Python Advanced"
         quiz2.description = "Advanced Python concepts"
         quiz2.total_questions = 15
         quiz2.total_participants = 40
         quiz2.created_at = datetime(2023, 2, 20, 8, 15, 0, 987654)
         quiz2.updated_at = datetime(2023, 2, 21, 16, 30, 0, 456789)
+        quiz2.get_formatted_created_at.return_value = "2023-02-20T08:15:00.987654Z"
+        quiz2.get_formatted_updated_at.return_value = "2023-02-21T16:30:00.456789Z"
 
         self.quiz_repository_mock.find_by_creator_id.return_value = [quiz1, quiz2]
 
@@ -88,6 +92,8 @@ class TestGetCreatorQuizzesQueryHandler(unittest.TestCase):
         quiz.total_participants = 3
         quiz.created_at = datetime(2023, 3, 10, 12, 0, 0, 0)
         quiz.updated_at = datetime(2023, 3, 10, 12, 0, 0, 0)
+        quiz.get_formatted_created_at.return_value = "2023-03-10T12:00:00.000000Z"
+        quiz.get_formatted_updated_at.return_value = "2023-03-10T12:00:00.000000Z"
 
         self.quiz_repository_mock.find_by_creator_id.return_value = [quiz]
 
@@ -114,6 +120,8 @@ class TestGetCreatorQuizzesQueryHandler(unittest.TestCase):
         quiz.total_participants = 0
         quiz.created_at = datetime(2023, 4, 1, 9, 0, 0, 500000)
         quiz.updated_at = datetime(2023, 4, 1, 9, 0, 0, 500000)
+        quiz.get_formatted_created_at.return_value = "2023-04-01T09:00:00.500000Z"
+        quiz.get_formatted_updated_at.return_value = "2023-04-01T09:00:00.500000Z"
 
         self.quiz_repository_mock.find_by_creator_id.return_value = [quiz]
 
@@ -132,6 +140,8 @@ class TestGetCreatorQuizzesQueryHandler(unittest.TestCase):
         quiz.total_participants = 500
         quiz.created_at = datetime(2023, 5, 15, 14, 30, 0, 750000)
         quiz.updated_at = datetime(2023, 5, 20, 10, 15, 0, 250000)
+        quiz.get_formatted_created_at.return_value = "2023-05-15T14:30:00.750000Z"
+        quiz.get_formatted_updated_at.return_value = "2023-05-20T10:15:00.250000Z"
 
         self.quiz_repository_mock.find_by_creator_id.return_value = [quiz]
 
@@ -154,6 +164,8 @@ class TestGetCreatorQuizzesQueryHandler(unittest.TestCase):
         quiz.total_participants = 7
         quiz.created_at = datetime(2023, 6, 1, 11, 0, 0, 123000)
         quiz.updated_at = datetime(2023, 6, 1, 11, 0, 0, 123000)
+        quiz.get_formatted_created_at.return_value = "2023-06-01T11:00:00.123000Z"
+        quiz.get_formatted_updated_at.return_value = "2023-06-01T11:00:00.123000Z"
 
         self.quiz_repository_mock.find_by_creator_id.return_value = [quiz]
 
@@ -171,6 +183,8 @@ class TestGetCreatorQuizzesQueryHandler(unittest.TestCase):
         quiz.total_participants = 15
         quiz.created_at = datetime(2023, 7, 10, 16, 45, 0, 999999)
         quiz.updated_at = datetime(2023, 7, 15, 8, 30, 0, 111111)
+        quiz.get_formatted_created_at.return_value = "2023-07-10T16:45:00.999999Z"
+        quiz.get_formatted_updated_at.return_value = "2023-07-15T08:30:00.111111Z"
 
         self.quiz_repository_mock.find_by_creator_id.return_value = [quiz]
 
@@ -195,6 +209,8 @@ class TestGetCreatorQuizzesQueryHandler(unittest.TestCase):
         quiz.total_participants = 2
         quiz.created_at = datetime(2023, 8, 5, 13, 20, 0, 0)
         quiz.updated_at = datetime(2023, 8, 5, 13, 20, 0, 0)
+        quiz.get_formatted_created_at.return_value = "2023-08-05T13:20:00.000000Z"
+        quiz.get_formatted_updated_at.return_value = "2023-08-05T13:20:00.000000Z"
 
         self.quiz_repository_mock.find_by_creator_id.return_value = [quiz]
 
@@ -212,6 +228,8 @@ class TestGetCreatorQuizzesQueryHandler(unittest.TestCase):
         quiz.total_participants = 1
         quiz.created_at = datetime(2023, 12, 31, 23, 59, 59, 999999)
         quiz.updated_at = datetime(2024, 1, 1, 0, 0, 0, 1)
+        quiz.get_formatted_created_at.return_value = "2023-12-31T23:59:59.999999Z"
+        quiz.get_formatted_updated_at.return_value = "2024-01-01T00:00:00.000001Z"
 
         self.quiz_repository_mock.find_by_creator_id.return_value = [quiz]
 
@@ -232,6 +250,8 @@ class TestGetCreatorQuizzesQueryHandler(unittest.TestCase):
             quiz.total_participants = i * 2
             quiz.created_at = datetime(2023, 1, 1, 0, 0, 0, i * 1000)
             quiz.updated_at = datetime(2023, 1, 1, 0, 0, 0, i * 1000)
+            quiz.get_formatted_created_at.return_value = f"2023-01-01T00:00:00.{i*1000:06d}Z"
+            quiz.get_formatted_updated_at.return_value = f"2023-01-01T00:00:00.{i*1000:06d}Z"
             quizzes.append(quiz)
 
         self.quiz_repository_mock.find_by_creator_id.return_value = quizzes

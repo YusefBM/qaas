@@ -9,8 +9,6 @@ from quiz.domain.participation.participation_not_found_for_quiz_and_participant_
 )
 from quiz.domain.participation.participation_related_attribute import ParticipationRelatedAttribute
 from quiz.domain.participation.participation_repository import ParticipationRepository
-from quiz.domain.quiz.quiz import Quiz
-from user.domain.user import User
 
 
 class DbParticipationRepository(ParticipationRepository):
@@ -25,32 +23,26 @@ class DbParticipationRepository(ParticipationRepository):
 
         return list(queryset.order_by("-quiz__created_at"))
 
-    def find_by_quiz_and_participant(self, quiz: Quiz, participant: User) -> Participation | None:
+    def find_or_fail_by_quiz_and_participant(self, quiz_id: UUID, participant_id: UUID) -> Participation:
         try:
             return Participation.objects.select_related("quiz", "participant", "invitation").get(
-                quiz=quiz, participant=participant
+                quiz_id=quiz_id, participant_id=participant_id
             )
-        except Participation.DoesNotExist:
-            return None
-
-    def find_or_fail_by_quiz_and_participant(self, quiz: Quiz, participant: User) -> Participation:
-        participation = self.find_by_quiz_and_participant(quiz, participant)
-        if participation is None:
-            raise ParticipationNotFoundForQuizAndParticipantException(quiz.id, participant.id)
-        return participation
+        except Participation.DoesNotExist as e:
+            raise ParticipationNotFoundForQuizAndParticipantException(quiz_id, participant_id) from e
 
     def save(self, participation: Participation) -> None:
         try:
             participation.save()
         except IntegrityError as exc:
-            if self._is_unique_constraint_violation(exc):
+            if self.__is_unique_constraint_violation(exc):
                 raise ParticipationAlreadyExistsException(
                     quiz_id=str(participation.quiz.id), participant_id=str(participation.participant.id)
-                )
+                ) from exc
             raise exc
 
     def exists_by_quiz_and_participant(self, quiz_id: UUID, participant_id: UUID) -> bool:
         return Participation.objects.filter(quiz_id=quiz_id, participant_id=participant_id).exists()
 
-    def _is_unique_constraint_violation(self, exc: IntegrityError) -> bool:
+    def __is_unique_constraint_violation(self, exc: IntegrityError) -> bool:
         return self.__UNIQUE_CONSTRAINT_QUIZ_AND_PARTICIPANT in exc.__cause__.diag.constraint_name

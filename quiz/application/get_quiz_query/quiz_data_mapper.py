@@ -1,18 +1,14 @@
-from typing import List
-
 from quiz.application.get_quiz_query.get_quiz_query_response import (
     GetQuizQueryResponse,
     QuizQuestion,
     QuizAnswer,
 )
-from quiz.domain.quiz.quiz_data import QuizData
+from quiz.domain.quiz.quiz_data import QuizData, AnswerData, QuestionData
 
 
 class QuizDataMapper:
-
-    @staticmethod
-    def map_to_response(quiz_data: QuizData) -> GetQuizQueryResponse:
-        questions = QuizDataMapper._map_questions(quiz_data)
+    def map_to_response(self, quiz_data: QuizData) -> GetQuizQueryResponse:
+        questions = self.__map_questions(quiz_data.questions)
 
         return GetQuizQueryResponse(
             quiz_id=quiz_data.quiz_id,
@@ -21,20 +17,18 @@ class QuizDataMapper:
             questions=questions,
         )
 
-    @staticmethod
-    def _map_questions(quiz_data: QuizData) -> List[QuizQuestion]:
+    def __map_questions(self, questions: list[QuestionData]) -> list[QuizQuestion]:
         return [
             QuizQuestion(
                 question_id=question_data.question_id,
                 text=question_data.text,
                 order=question_data.order,
-                answers=QuizDataMapper._map_answers(question_data.answers),
+                answers=self.__map_answers(question_data.answers),
             )
-            for question_data in quiz_data.questions
+            for question_data in questions
         ]
 
-    @staticmethod
-    def _map_answers(answers) -> List[QuizAnswer]:
+    def __map_answers(self, answers: list[AnswerData]) -> list[QuizAnswer]:
         return [
             QuizAnswer(
                 answer_id=answer_data.answer_id,

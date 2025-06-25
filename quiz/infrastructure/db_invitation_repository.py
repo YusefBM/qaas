@@ -1,4 +1,3 @@
-from typing import Optional
 from uuid import UUID
 
 from django.db import IntegrityError
@@ -25,7 +24,7 @@ class DbInvitationRepository(InvitationRepository):
         except Invitation.DoesNotExist:
             raise InvitationNotFoundException(invitation_id)
 
-    def find_active_invitation(self, quiz_id: UUID, participant_id: UUID) -> Optional[Invitation]:
+    def find_active_invitation(self, quiz_id: UUID, participant_id: UUID) -> Invitation | None:
         try:
             return Invitation.objects.select_related("quiz", "invited").get(
                 quiz_id=quiz_id, participant_id=participant_id, accepted_at__isnull=True
@@ -37,14 +36,14 @@ class DbInvitationRepository(InvitationRepository):
         try:
             invitation.save()
         except IntegrityError as exc:
-            if self._is_unique_constraint_violation(exc):
+            if self.__is_unique_constraint_violation(exc):
                 raise InvitationAlreadyExistsException(
                     quiz_id=str(invitation.quiz.id), participant_id=str(invitation.invited.id)
-                )
+                ) from exc
             raise exc
 
     def exists_by_quiz_and_invited(self, quiz_id: UUID, invited_id: UUID) -> bool:
         return Invitation.objects.filter(quiz_id=quiz_id, invited_id=invited_id).exists()
 
-    def _is_unique_constraint_violation(self, exc: IntegrityError) -> bool:
+    def __is_unique_constraint_violation(self, exc: IntegrityError) -> bool:
         return self.__UNIQUE_CONSTRAINT_QUIZ_AND_PARTICIPANT in exc.__cause__.diag.constraint_name

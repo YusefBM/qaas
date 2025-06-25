@@ -7,8 +7,6 @@ from quiz.domain.quiz.quiz_repository import QuizRepository
 
 
 class GetCreatorQuizzesQueryHandler:
-    __UTC_DATETIME_FORMAT = "%Y-%m-%dT%H:%M:%S.%fZ"
-
     def __init__(self, quiz_repository: QuizRepository) -> None:
         self.__quiz_repository = quiz_repository
         self.__logger = getLogger(__name__)
@@ -27,8 +25,8 @@ class GetCreatorQuizzesQueryHandler:
                     description=quiz.description,
                     questions_count=quiz.total_questions,
                     participants_count=quiz.total_participants,
-                    created_at=quiz.created_at.strftime(self.__UTC_DATETIME_FORMAT),
-                    updated_at=quiz.updated_at.strftime(self.__UTC_DATETIME_FORMAT),
+                    created_at=quiz.get_formatted_created_at(),
+                    updated_at=quiz.get_formatted_updated_at(),
                 )
             )
 

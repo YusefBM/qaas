@@ -142,42 +142,6 @@ class TestDbAnswerSubmissionRepository(unittest.TestCase):
         mock_save.assert_any_call(submission1)
         mock_save.assert_any_call(submission2)
 
-    def test_is_unique_constraint_violation_returns_true_for_participation_question_constraint(self):
-        mock_constraint_diag = Mock()
-        mock_constraint_diag.constraint_name = "quiz_answersubmission_participation_id_question_id"
-
-        class MockCause(Exception):
-            def __init__(self):
-                super().__init__("Database constraint violation")
-                self.diag = mock_constraint_diag
-
-        mock_cause = MockCause()
-
-        integrity_error = IntegrityError("UNIQUE constraint failed")
-        integrity_error.__cause__ = mock_cause
-
-        result = self.repository._is_unique_constraint_violation(integrity_error)
-
-        self.assertTrue(result)
-
-    def test_is_unique_constraint_violation_returns_false_for_other_constraints(self):
-        mock_constraint_diag = Mock()
-        mock_constraint_diag.constraint_name = "some_other_constraint"
-
-        class MockCause(Exception):
-            def __init__(self):
-                super().__init__("Other database constraint violation")
-                self.diag = mock_constraint_diag
-
-        mock_cause = MockCause()
-
-        integrity_error = IntegrityError("Other constraint failed")
-        integrity_error.__cause__ = mock_cause
-
-        result = self.repository._is_unique_constraint_violation(integrity_error)
-
-        self.assertFalse(result)
-
     def test_save_with_different_question_ids(self):
         different_question = Mock(spec=Question)
         different_question.id = 99

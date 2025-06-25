@@ -1,6 +1,7 @@
 import smtplib
 import socket
 import unittest
+from logging import Logger
 from unittest.mock import Mock, patch
 
 from quiz.domain.invitation.invitation import Invitation
@@ -12,7 +13,9 @@ from user.domain.user import User
 
 class TestDjangoEmailService(unittest.TestCase):
     def setUp(self):
-        self.email_service = DjangoEmailService()
+        self.mock_logger = Mock(spec=Logger)
+        with patch("quiz.infrastructure.django_email_service.getLogger", return_value=self.mock_logger):
+            self.email_service = DjangoEmailService()
 
         self.mock_quiz = Mock(spec=Quiz)
         self.mock_quiz.title = "JavaScript Fundamentals"
@@ -128,6 +131,7 @@ class TestDjangoEmailService(unittest.TestCase):
             self.email_service.send_invitation_email(self.mock_invitation, self.invitation_link)
 
         self.assertEqual(context.exception.__cause__, smtp_error)
+        self.mock_logger.error.assert_called_once_with("Failed to send email to alice@student.com: SMTP server error")
 
     @patch("quiz.infrastructure.django_email_service.send_mail")
     @patch("quiz.infrastructure.django_email_service.render_to_string")
@@ -145,6 +149,7 @@ class TestDjangoEmailService(unittest.TestCase):
             self.email_service.send_invitation_email(self.mock_invitation, self.invitation_link)
 
         self.assertEqual(context.exception.__cause__, socket_error)
+        self.mock_logger.error.assert_called_once_with("Failed to send email to alice@student.com: Connection failed")
 
     @patch("quiz.infrastructure.django_email_service.send_mail")
     @patch("quiz.infrastructure.django_email_service.render_to_string")
@@ -162,6 +167,7 @@ class TestDjangoEmailService(unittest.TestCase):
             self.email_service.send_invitation_email(self.mock_invitation, self.invitation_link)
 
         self.assertEqual(context.exception.__cause__, timeout_error)
+        self.mock_logger.error.assert_called_once_with("Failed to send email to alice@student.com: Timeout occurred")
 
     @patch("quiz.infrastructure.django_email_service.send_mail")
     @patch("quiz.infrastructure.django_email_service.render_to_string")
@@ -179,6 +185,7 @@ class TestDjangoEmailService(unittest.TestCase):
             self.email_service.send_invitation_email(self.mock_invitation, self.invitation_link)
 
         self.assertEqual(context.exception.__cause__, connection_error)
+        self.mock_logger.error.assert_called_once_with("Failed to send email to alice@student.com: Connection refused")
 
     @patch("quiz.infrastructure.django_email_service.send_mail")
     @patch("quiz.infrastructure.django_email_service.render_to_string")
@@ -196,6 +203,7 @@ class TestDjangoEmailService(unittest.TestCase):
             self.email_service.send_invitation_email(self.mock_invitation, self.invitation_link)
 
         self.assertEqual(context.exception.__cause__, os_error)
+        self.mock_logger.error.assert_called_once_with("Failed to send email to alice@student.com: OS level error")
 
     @patch("quiz.infrastructure.django_email_service.send_mail")
     @patch("quiz.infrastructure.django_email_service.render_to_string")

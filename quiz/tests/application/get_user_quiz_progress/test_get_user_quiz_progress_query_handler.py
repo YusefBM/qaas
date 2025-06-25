@@ -51,7 +51,7 @@ class TestGetUserQuizProgressQueryHandler(unittest.TestCase):
             invited_at="2024-01-15T10:30:00.000000Z",
             started_at="2024-01-15T11:00:00.000000Z",
             completed_at="2024-01-16T14:20:00.000000Z",
-            my_score=85,
+            score=85,
         )
 
         self.mock_quiz_repository.find_or_fail_by_id.return_value = self.mock_quiz
@@ -66,11 +66,11 @@ class TestGetUserQuizProgressQueryHandler(unittest.TestCase):
         self.assertEqual(response.total_questions, 10)
         self.assertEqual(response.total_possible_points, 100)
         self.assertEqual(response.quiz_created_at, "2024-01-15T09:00:00.000000Z")
-        self.assertEqual(response.my_participation.status, "completed")
-        self.assertEqual(response.my_participation.invited_at, "2024-01-15T10:30:00.000000Z")
-        self.assertEqual(response.my_participation.completed_at, "2024-01-16T14:20:00.000000Z")
-        self.assertEqual(response.my_participation.my_score, 85)
-        self.assertEqual(response.my_participation.score_percentage, 85.0)
+        self.assertEqual(response.participation.status, "completed")
+        self.assertEqual(response.participation.invited_at, "2024-01-15T10:30:00.000000Z")
+        self.assertEqual(response.participation.completed_at, "2024-01-16T14:20:00.000000Z")
+        self.assertEqual(response.participation.score, 85)
+        self.assertEqual(response.participation.score_percentage, 85.0)
 
         self.mock_quiz_repository.find_or_fail_by_id.assert_called_once_with(quiz_id=self.quiz_id)
         self.mock_participation_finder.find_user_participation_for_quiz.assert_called_once_with(
@@ -88,7 +88,7 @@ class TestGetUserQuizProgressQueryHandler(unittest.TestCase):
             invited_at="2024-01-20T11:00:00.000000Z",
             started_at=None,
             completed_at=None,
-            my_score=None,
+            score=None,
         )
 
         self.mock_quiz_repository.find_or_fail_by_id.return_value = self.mock_quiz
@@ -96,10 +96,10 @@ class TestGetUserQuizProgressQueryHandler(unittest.TestCase):
 
         response = self.handler.handle(query)
 
-        self.assertEqual(response.my_participation.status, "invited")
-        self.assertEqual(response.my_participation.completed_at, None)
-        self.assertEqual(response.my_participation.my_score, None)
-        self.assertEqual(response.my_participation.score_percentage, None)
+        self.assertEqual(response.participation.status, "invited")
+        self.assertEqual(response.participation.completed_at, None)
+        self.assertEqual(response.participation.score, None)
+        self.assertEqual(response.participation.score_percentage, None)
 
     def test_handle_success_perfect_score(self):
         query = GetUserQuizProgressQuery(
@@ -112,7 +112,7 @@ class TestGetUserQuizProgressQueryHandler(unittest.TestCase):
             invited_at="2024-02-01T08:00:00.000000Z",
             started_at="2024-02-01T08:30:00.000000Z",
             completed_at="2024-02-01T09:30:00.000000Z",
-            my_score=100,
+            score=100,
         )
 
         self.mock_quiz_repository.find_or_fail_by_id.return_value = self.mock_quiz
@@ -120,8 +120,8 @@ class TestGetUserQuizProgressQueryHandler(unittest.TestCase):
 
         response = self.handler.handle(query)
 
-        self.assertEqual(response.my_participation.my_score, 100)
-        self.assertEqual(response.my_participation.score_percentage, 100.0)
+        self.assertEqual(response.participation.score, 100)
+        self.assertEqual(response.participation.score_percentage, 100.0)
 
     def test_handle_success_zero_score(self):
         query = GetUserQuizProgressQuery(
@@ -134,7 +134,7 @@ class TestGetUserQuizProgressQueryHandler(unittest.TestCase):
             invited_at="2024-02-05T14:00:00.000000Z",
             started_at="2024-02-05T14:30:00.000000Z",
             completed_at="2024-02-05T15:45:00.000000Z",
-            my_score=0,
+            score=0,
         )
 
         self.mock_quiz_repository.find_or_fail_by_id.return_value = self.mock_quiz
@@ -142,8 +142,8 @@ class TestGetUserQuizProgressQueryHandler(unittest.TestCase):
 
         response = self.handler.handle(query)
 
-        self.assertEqual(response.my_participation.my_score, 0)
-        self.assertEqual(response.my_participation.score_percentage, 0.0)
+        self.assertEqual(response.participation.score, 0)
+        self.assertEqual(response.participation.score_percentage, 0.0)
 
     def test_handle_success_decimal_score_percentage(self):
         query = GetUserQuizProgressQuery(
@@ -164,7 +164,7 @@ class TestGetUserQuizProgressQueryHandler(unittest.TestCase):
             invited_at="2024-03-01T13:00:00.000000Z",
             started_at="2024-03-01T13:30:00.000000Z",
             completed_at="2024-03-01T14:45:00.000000Z",
-            my_score=125,
+            score=125,
         )
 
         self.mock_quiz_repository.find_or_fail_by_id.return_value = mock_quiz_with_150_points
@@ -172,8 +172,7 @@ class TestGetUserQuizProgressQueryHandler(unittest.TestCase):
 
         response = self.handler.handle(query)
 
-        expected_percentage = (125 / 150) * 100
-        self.assertEqual(response.my_participation.score_percentage, expected_percentage)
+        self.assertEqual(response.participation.score_percentage, 83.33)
 
     def test_handle_quiz_not_found_exception(self):
         query = GetUserQuizProgressQuery(
@@ -220,7 +219,7 @@ class TestGetUserQuizProgressQueryHandler(unittest.TestCase):
             invited_at="2024-04-01T11:00:00.000000Z",
             started_at="2024-04-01T11:30:00.000000Z",
             completed_at="2024-04-01T12:00:00.000000Z",
-            my_score=0,
+            score=0,
         )
 
         self.mock_quiz_repository.find_or_fail_by_id.return_value = mock_zero_points_quiz
@@ -228,7 +227,7 @@ class TestGetUserQuizProgressQueryHandler(unittest.TestCase):
 
         response = self.handler.handle(query)
 
-        self.assertEqual(response.my_participation.score_percentage, None)
+        self.assertEqual(response.participation.score_percentage, None)
 
     def test_handle_with_different_quiz_and_user_ids(self):
         different_quiz_id = UUID("99999999-8888-7777-6666-555555555555")
@@ -252,7 +251,7 @@ class TestGetUserQuizProgressQueryHandler(unittest.TestCase):
             invited_at="2024-05-01T16:00:00.000000Z",
             started_at="2024-05-01T16:30:00.000000Z",
             completed_at="2024-05-01T17:00:00.000000Z",
-            my_score=72,
+            score=72,
         )
 
         self.mock_quiz_repository.find_or_fail_by_id.return_value = different_quiz

@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from typing import Dict, Any
+from typing import Any
 from uuid import UUID
 
 
@@ -13,7 +13,7 @@ class SubmitQuizAnswersResponse:
     total_possible_score: int
     completed_at: str
 
-    def as_dict(self) -> Dict[str, Any]:
+    def as_dict(self) -> dict[str, Any]:
         return {
             "message": self.message,
             "participation_id": str(self.participation_id),

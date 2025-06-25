@@ -75,27 +75,6 @@ class TestDbQuestionRepository(unittest.TestCase):
             self.repository.save(question)
 
     @patch("quiz.domain.quiz.question.Question.objects")
-    def test_find_by_id_success(self, mock_objects):
-        expected_question = Mock(spec=Question)
-        expected_question.id = self.question_id
-        expected_question.text = "What is Python?"
-
-        mock_objects.get.return_value = expected_question
-
-        result = self.repository.find_by_id(self.question_id)
-
-        self.assertEqual(result, expected_question)
-        mock_objects.get.assert_called_once_with(id=self.question_id)
-
-    @patch("quiz.domain.quiz.question.Question.objects")
-    def test_find_by_id_returns_none_when_not_found(self, mock_objects):
-        mock_objects.get.side_effect = Question.DoesNotExist
-
-        result = self.repository.find_by_id(self.question_id)
-
-        self.assertIsNone(result)
-
-    @patch("quiz.domain.quiz.question.Question.objects")
     def test_find_by_ids_success_with_multiple_questions(self, mock_objects):
         question1 = Mock(spec=Question)
         question1.id = 1
@@ -184,39 +163,3 @@ class TestDbQuestionRepository(unittest.TestCase):
         self.assertEqual(result[10], question_a)
         self.assertEqual(result[20], question_b)
         self.assertEqual(len(result), 2)
-
-    def test_is_unique_constraint_violation_returns_true_for_quiz_order_constraint(self):
-        mock_constraint_diag = Mock()
-        mock_constraint_diag.constraint_name = "quiz_question_quiz_id_order"
-
-        class MockCause(Exception):
-            def __init__(self):
-                super().__init__("Database constraint violation")
-                self.diag = mock_constraint_diag
-
-        mock_cause = MockCause()
-
-        integrity_error = IntegrityError("UNIQUE constraint failed")
-        integrity_error.__cause__ = mock_cause
-
-        result = self.repository._is_unique_constraint_violation(integrity_error)
-
-        self.assertTrue(result)
-
-    def test_is_unique_constraint_violation_returns_false_for_other_constraints(self):
-        mock_constraint_diag = Mock()
-        mock_constraint_diag.constraint_name = "some_other_constraint"
-
-        class MockCause(Exception):
-            def __init__(self):
-                super().__init__("Other database constraint violation")
-                self.diag = mock_constraint_diag
-
-        mock_cause = MockCause()
-
-        integrity_error = IntegrityError("Other constraint failed")
-        integrity_error.__cause__ = mock_cause
-
-        result = self.repository._is_unique_constraint_violation(integrity_error)
-
-        self.assertFalse(result)

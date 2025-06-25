@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from typing import Dict, Any
+from typing import Any
 from uuid import UUID
 
 
@@ -11,7 +11,7 @@ class AcceptInvitationResponse:
     quiz_id: UUID
     quiz_title: str
 
-    def as_dict(self) -> Dict[str, Any]:
+    def as_dict(self) -> dict[str, Any]:
         return {
             "message": self.message,
             "invitation_id": str(self.invitation_id),

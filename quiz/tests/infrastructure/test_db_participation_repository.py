@@ -79,7 +79,7 @@ class TestDbParticipationRepository(unittest.TestCase):
         self.assertEqual(result, [])
 
     @patch("quiz.domain.participation.participation.Participation.objects")
-    def test_find_by_quiz_and_participant_success(self, mock_objects):
+    def test_find_or_fail_by_quiz_and_participant_success(self, mock_objects):
         expected_participation = Mock(spec=Participation)
         expected_participation.quiz = self.mock_quiz
         expected_participation.participant = self.mock_participant
@@ -88,43 +88,22 @@ class TestDbParticipationRepository(unittest.TestCase):
         mock_select_related_queryset.get.return_value = expected_participation
         mock_objects.select_related.return_value = mock_select_related_queryset
 
-        result = self.repository.find_by_quiz_and_participant(self.mock_quiz, self.mock_participant)
+        result = self.repository.find_or_fail_by_quiz_and_participant(self.quiz_id, self.participant_id)
 
         self.assertEqual(result, expected_participation)
         mock_objects.select_related.assert_called_once_with("quiz", "participant", "invitation")
-        mock_select_related_queryset.get.assert_called_once_with(quiz=self.mock_quiz, participant=self.mock_participant)
+        mock_select_related_queryset.get.assert_called_once_with(
+            quiz_id=self.quiz_id, participant_id=self.participant_id
+        )
 
     @patch("quiz.domain.participation.participation.Participation.objects")
-    def test_find_by_quiz_and_participant_returns_none_when_not_found(self, mock_objects):
+    def test_find_or_fail_by_quiz_and_participant_raises_participation_not_found_exception(self, mock_objects):
         mock_select_related_queryset = Mock()
         mock_select_related_queryset.get.side_effect = Participation.DoesNotExist
         mock_objects.select_related.return_value = mock_select_related_queryset
 
-        result = self.repository.find_by_quiz_and_participant(self.mock_quiz, self.mock_participant)
-
-        self.assertIsNone(result)
-
-    @patch.object(DbParticipationRepository, "find_by_quiz_and_participant")
-    def test_find_or_fail_by_quiz_and_participant_success(self, mock_find_by_quiz_and_participant):
-        expected_participation = Mock(spec=Participation)
-        expected_participation.quiz = self.mock_quiz
-        expected_participation.participant = self.mock_participant
-
-        mock_find_by_quiz_and_participant.return_value = expected_participation
-
-        result = self.repository.find_or_fail_by_quiz_and_participant(self.mock_quiz, self.mock_participant)
-
-        self.assertEqual(result, expected_participation)
-        mock_find_by_quiz_and_participant.assert_called_once_with(self.mock_quiz, self.mock_participant)
-
-    @patch.object(DbParticipationRepository, "find_by_quiz_and_participant")
-    def test_find_or_fail_by_quiz_and_participant_raises_participation_not_found_exception(
-        self, mock_find_by_quiz_and_participant
-    ):
-        mock_find_by_quiz_and_participant.return_value = None
-
         with self.assertRaises(ParticipationNotFoundForQuizAndParticipantException):
-            self.repository.find_or_fail_by_quiz_and_participant(self.mock_quiz, self.mock_participant)
+            self.repository.find_or_fail_by_quiz_and_participant(self.quiz_id, self.participant_id)
 
     def test_save_success(self):
         participation = Mock(spec=Participation)
@@ -215,39 +194,3 @@ class TestDbParticipationRepository(unittest.TestCase):
 
         self.assertEqual(result, [participation1])
         mock_queryset.select_related.assert_called_once_with()
-
-    def test_is_unique_constraint_violation_returns_true_for_participation_constraint(self):
-        mock_constraint_diag = Mock()
-        mock_constraint_diag.constraint_name = "quiz_participation_quiz_id_participant_id_ef6ab5ef_uniq"
-
-        class MockCause(Exception):
-            def __init__(self):
-                super().__init__("Database constraint violation")
-                self.diag = mock_constraint_diag
-
-        mock_cause = MockCause()
-
-        integrity_error = IntegrityError("UNIQUE constraint failed")
-        integrity_error.__cause__ = mock_cause
-
-        result = self.repository._is_unique_constraint_violation(integrity_error)
-
-        self.assertTrue(result)
-
-    def test_is_unique_constraint_violation_returns_false_for_other_constraints(self):
-        mock_constraint_diag = Mock()
-        mock_constraint_diag.constraint_name = "some_other_constraint"
-
-        class MockCause(Exception):
-            def __init__(self):
-                super().__init__("Other database constraint violation")
-                self.diag = mock_constraint_diag
-
-        mock_cause = MockCause()
-
-        integrity_error = IntegrityError("Other constraint failed")
-        integrity_error.__cause__ = mock_cause
-
-        result = self.repository._is_unique_constraint_violation(integrity_error)
-
-        self.assertFalse(result)

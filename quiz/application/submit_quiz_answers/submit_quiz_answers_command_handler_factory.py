@@ -3,7 +3,6 @@ from quiz.domain.participation.quiz_score_calculator_factory import QuizScoreCal
 from quiz.infrastructure.db_answer_submission_repository import DbAnswerSubmissionRepository
 from quiz.infrastructure.db_participation_repository import DbParticipationRepository
 from quiz.infrastructure.db_quiz_repository import DbQuizRepository
-from user.infrastructure.db_user_repository import DbUserRepository
 
 
 class SubmitQuizAnswersCommandHandlerFactory:
@@ -14,5 +13,4 @@ class SubmitQuizAnswersCommandHandlerFactory:
             participation_repository=DbParticipationRepository(),
             answer_submission_repository=DbAnswerSubmissionRepository(),
             quiz_score_calculator=QuizScoreCalculatorFactory.create(),
-            user_repository=DbUserRepository(),
         )

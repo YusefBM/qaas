@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from typing import Dict, Any, Optional
+from typing import Any
 from uuid import UUID
 
 
@@ -12,11 +12,11 @@ class QuizParticipationSummary:
     total_participants: int
     quiz_created_at: str
     participation_status: str
-    score: Optional[int] = None
-    completed_at: Optional[str] = None
-    participation_created_at: Optional[str] = None
+    score: int | None = None
+    completed_at: str | None = None
+    participation_created_at: str | None = None
 
-    def as_dict(self) -> Dict[str, Any]:
+    def as_dict(self) -> dict[str, Any]:
         return {
             "quiz_id": str(self.quiz_id),
             "quiz_title": self.quiz_title,
@@ -36,7 +36,7 @@ class GetUserQuizzesResponse:
     quizzes_participations: list[QuizParticipationSummary]
     total_count: int
 
-    def as_dict(self) -> Dict[str, Any]:
+    def as_dict(self) -> dict[str, Any]:
         return {
             "user_quizzes": [participation.as_dict() for participation in self.quizzes_participations],
             "total_count": self.total_count,

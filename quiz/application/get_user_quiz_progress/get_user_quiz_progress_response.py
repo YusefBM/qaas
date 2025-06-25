@@ -1,22 +1,22 @@
 from dataclasses import dataclass
-from typing import Dict, Any, Optional
+from typing import Any
 
 
 @dataclass(frozen=True)
-class Participation:
+class ParticipationData:
     status: str
     invited_at: str
-    completed_at: Optional[str]
-    my_score: Optional[int]
-    score_percentage: Optional[float]
+    completed_at: str | None
+    score: int | None
+    score_percentage: float | None
 
-    def as_dict(self) -> Dict[str, Any]:
+    def as_dict(self) -> dict[str, Any]:
         return {
             "status": self.status,
             "invited_at": self.invited_at,
             "completed_at": self.completed_at,
-            "my_score": self.my_score,
-            "score_percentage": round(self.score_percentage, 2) if self.score_percentage else None,
+            "score": self.score,
+            "score_percentage": self.score_percentage,
         }
 
 
@@ -28,10 +28,9 @@ class GetUserQuizProgressResponse:
     total_questions: int
     total_possible_points: int
     quiz_created_at: str
+    participation: ParticipationData
 
-    my_participation: Participation
-
-    def as_dict(self) -> Dict[str, Any]:
+    def as_dict(self) -> dict[str, Any]:
         return {
             "quiz_id": self.quiz_id,
             "quiz_title": self.quiz_title,
@@ -39,5 +38,5 @@ class GetUserQuizProgressResponse:
             "total_questions": self.total_questions,
             "total_possible_points": self.total_possible_points,
             "quiz_created_at": self.quiz_created_at,
-            "my_participation": self.my_participation.as_dict(),
+            "participation": self.participation.as_dict(),
         }

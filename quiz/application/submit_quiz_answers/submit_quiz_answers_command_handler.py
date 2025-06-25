@@ -10,7 +10,6 @@ from quiz.domain.participation.participation_repository import ParticipationRepo
 from quiz.domain.participation.quiz_already_completed_exception import QuizAlreadyCompletedException
 from quiz.domain.participation.quiz_score_calculator import QuizScoreCalculator, SubmittedAnswer
 from quiz.domain.quiz.quiz_repository import QuizRepository
-from user.domain.user_repository import UserRepository
 
 
 class SubmitQuizAnswersCommandHandler:
@@ -20,13 +19,11 @@ class SubmitQuizAnswersCommandHandler:
         participation_repository: ParticipationRepository,
         answer_submission_repository: AnswerSubmissionRepository,
         quiz_score_calculator: QuizScoreCalculator,
-        user_repository: UserRepository,
     ) -> None:
         self.__quiz_repository = quiz_repository
         self.__participation_repository = participation_repository
         self.__answer_submission_repository = answer_submission_repository
         self.__quiz_score_calculator = quiz_score_calculator
-        self.__user_repository = user_repository
         self.__logger = getLogger(__name__)
 
     def handle(self, command: SubmitQuizAnswersCommand) -> SubmitQuizAnswersResponse:
@@ -35,9 +32,10 @@ class SubmitQuizAnswersCommandHandler:
         )
 
         quiz = self.__quiz_repository.find_or_fail_by_id(command.quiz_id)
-        participant = self.__user_repository.find_or_fail_by_id(command.participant_id)
 
-        participation = self.__participation_repository.find_or_fail_by_quiz_and_participant(quiz, participant)
+        participation = self.__participation_repository.find_or_fail_by_quiz_and_participant(
+            command.quiz_id, command.participant_id
+        )
 
         if participation.is_completed():
             raise QuizAlreadyCompletedException(quiz_id=command.quiz_id, user_id=command.participant_id)

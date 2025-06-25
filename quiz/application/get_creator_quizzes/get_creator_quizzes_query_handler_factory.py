@@ -5,5 +5,4 @@ from quiz.infrastructure.db_quiz_repository import DbQuizRepository
 class GetCreatorQuizzesQueryHandlerFactory:
     @staticmethod
     def create() -> GetCreatorQuizzesQueryHandler:
-        quiz_repository = DbQuizRepository()
-        return GetCreatorQuizzesQueryHandler(quiz_repository=quiz_repository)
+        return GetCreatorQuizzesQueryHandler(quiz_repository=DbQuizRepository())

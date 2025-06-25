@@ -5,7 +5,7 @@ from uuid import UUID
 from quiz.domain.quiz.answer import Answer
 from quiz.domain.quiz.question import Question
 from quiz.domain.quiz.quiz import Quiz
-from quiz.domain.quiz.quiz_data import QuizData, QuestionData, AnswerData
+from quiz.domain.quiz.quiz_data import QuizData
 from quiz.domain.quiz.quiz_not_found_exception import QuizNotFoundException
 from quiz.infrastructure.db_quiz_finder import DbQuizFinder
 
@@ -232,58 +232,3 @@ class TestDbQuizFinder(unittest.TestCase):
         self.assertEqual(len(result.questions), 1)
         self.assertEqual(len(result.questions[0].answers), 1)
         self.assertEqual(result.questions[0].answers[0].text, "Single Answer")
-
-    def test_build_questions_from_quiz_with_multiple_questions_and_answers(self):
-        mock_answer1 = Mock(spec=Answer)
-        mock_answer1.id = UUID("aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee")
-        mock_answer1.text = "Answer 1"
-        mock_answer1.order = 1
-
-        mock_answer2 = Mock(spec=Answer)
-        mock_answer2.id = UUID("bbbbbbbb-cccc-dddd-eeee-ffffffffffff")
-        mock_answer2.text = "Answer 2"
-        mock_answer2.order = 2
-
-        mock_answers_queryset = Mock()
-        mock_answers_queryset.all.return_value.order_by.return_value = [mock_answer1, mock_answer2]
-
-        mock_question = Mock(spec=Question)
-        mock_question.id = UUID("eeeeeeee-ffff-0000-1111-222222222222")
-        mock_question.text = "Test Question"
-        mock_question.order = 1
-        mock_question.points = 20
-        mock_question.answers = mock_answers_queryset
-
-        mock_questions_queryset = Mock()
-        mock_questions_queryset.all.return_value.order_by.return_value = [mock_question]
-
-        mock_quiz = Mock(spec=Quiz)
-        mock_quiz.questions = mock_questions_queryset
-
-        result = self.finder._build_questions_from_quiz(mock_quiz)
-
-        self.assertEqual(len(result), 1)
-        question = result[0]
-        self.assertIsInstance(question, QuestionData)
-        self.assertEqual(question.question_id, UUID("eeeeeeee-ffff-0000-1111-222222222222"))
-        self.assertEqual(question.text, "Test Question")
-        self.assertEqual(question.order, 1)
-        self.assertEqual(question.points, 20)
-        self.assertEqual(len(question.answers), 2)
-
-        answer1 = question.answers[0]
-        self.assertIsInstance(answer1, AnswerData)
-        self.assertEqual(answer1.answer_id, UUID("aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee"))
-        self.assertEqual(answer1.text, "Answer 1")
-        self.assertEqual(answer1.order, 1)
-
-    def test_build_questions_from_quiz_with_empty_quiz(self):
-        mock_questions_queryset = Mock()
-        mock_questions_queryset.all.return_value.order_by.return_value = []
-
-        mock_quiz = Mock(spec=Quiz)
-        mock_quiz.questions = mock_questions_queryset
-
-        result = self.finder._build_questions_from_quiz(mock_quiz)
-
-        self.assertEqual(len(result), 0)

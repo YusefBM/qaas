@@ -3,8 +3,6 @@ from uuid import UUID
 
 from quiz.domain.participation.participation import Participation
 from quiz.domain.participation.participation_related_attribute import ParticipationRelatedAttribute
-from quiz.domain.quiz.quiz import Quiz
-from user.domain.user import User
 
 
 class ParticipationRepository(ABC):
@@ -15,11 +13,7 @@ class ParticipationRepository(ABC):
         pass
 
     @abstractmethod
-    def find_by_quiz_and_participant(self, quiz: Quiz, participant: User) -> Participation | None:
-        pass
-
-    @abstractmethod
-    def find_or_fail_by_quiz_and_participant(self, quiz: Quiz, participant: User) -> Participation:
+    def find_or_fail_by_quiz_and_participant(self, quiz_id: UUID, participant_id: UUID) -> Participation:
         pass
 
     @abstractmethod

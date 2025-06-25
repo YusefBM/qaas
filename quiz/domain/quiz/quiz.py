@@ -40,6 +40,9 @@ class Quiz(models.Model):
     def get_formatted_created_at(self) -> str:
         return self.created_at.strftime(self.__UTC_DATETIME_FORMAT)
 
+    def get_formatted_updated_at(self) -> str:
+        return self.updated_at.strftime(self.__UTC_DATETIME_FORMAT)
+
     @property
     def total_questions(self) -> int:
         return self.questions.count()

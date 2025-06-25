@@ -60,8 +60,7 @@ class TestDbUserRepository(unittest.TestCase):
         with self.assertRaises(UserNotFoundException) as context:
             self.repository.find_or_fail_by_email(self.user_email)
 
-        expected_message = f"User with email {self.user_email} not found"
-        self.assertEqual(context.exception.user_id, expected_message)
+        self.assertEqual(context.exception.user_email, self.user_email)
         mock_objects.get.assert_called_once_with(email=self.user_email)
 
     @patch("user.domain.user.User.objects")

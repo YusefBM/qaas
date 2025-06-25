@@ -12,11 +12,11 @@ class DbUserRepository(UserRepository):
     def find_or_fail_by_id(self, user_id: UUID) -> User:
         try:
             return User.objects.get(id=user_id)
-        except ObjectDoesNotExist:
-            raise UserNotFoundException(user_id)
+        except ObjectDoesNotExist as e:
+            raise UserNotFoundException(user_id=user_id) from e
 
     def find_or_fail_by_email(self, email: str) -> User:
         try:
             return User.objects.get(email=email)
-        except ObjectDoesNotExist:
-            raise UserNotFoundException(f"User with email {email} not found")
+        except ObjectDoesNotExist as e:
+            raise UserNotFoundException(user_email=email) from e

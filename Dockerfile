@@ -35,7 +35,6 @@ WORKDIR /app
 
 COPY --chown=django:django . .
 
-# Copy and make entrypoint script executable
 COPY --chown=django:django entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
 
