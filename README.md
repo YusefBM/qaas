@@ -151,6 +151,107 @@ erDiagram
 - **Audit fields** with created_at/updated_at timestamps
 - **Status tracking** through nullable fields (accepted_at, completed_at)
 
+### Request Flow (Clean Architecture)
+
+The following sequence diagram shows how a request flows through the different architectural layers using the "Create Quiz" operation as an example:
+
+```mermaid
+sequenceDiagram
+    participant Client as 📱 Client
+    participant View as 🌐 Django View
+    participant Handler as ⚙️ Command Handler
+    participant Factory as 🏭 Factory
+    participant Repo as 🗄️ Repository
+    participant Domain as 🏛️ Domain Entity
+    participant DB as 💾 Database
+    
+    Client->>View: POST /api/v1/quizzes/
+    View->>View: Validate JWT Token
+    View->>View: Parse & Validate JSON
+    View->>Handler: CreateQuizCommand
+    Handler->>Factory: get_quiz_repository()
+    Factory-->>Handler: QuizRepository
+    Handler->>Handler: Validate Business Rules
+    Handler->>Domain: Quiz.create()
+    Domain->>Domain: Validate Quiz Data
+    Domain-->>Handler: Quiz Entity
+    Handler->>Repo: save(quiz)
+    Repo->>DB: INSERT INTO quiz...
+    DB-->>Repo: Success
+    Repo-->>Handler: Saved Quiz
+    Handler-->>View: CreateQuizResponse
+    View-->>Client: 201 Created + Quiz Data
+```
+
+**Key Flow Characteristics:**
+- **Infrastructure Layer** (Views) handles HTTP concerns and authentication
+- **Application Layer** (Handlers) orchestrates business operations via commands and queries
+- **Domain Layer** (Entities) contains core business logic and validation
+- **Dependency Injection** through factories maintains loose coupling
+- **Clean separation** ensures testability and maintainability
+
+### Domain-Driven Design (DDD) Aggregates
+
+The following diagram shows the DDD aggregate boundaries and their internal structure:
+
+```mermaid
+graph TB
+    subgraph "Quiz Aggregate"
+        QR["🏛️ Quiz<br/>(Aggregate Root)"]
+        Q1["📝 Question<br/>(Entity)"]
+        A1["✅ Answer<br/>(Entity)"]
+        
+        QR -->|"contains (1:N)"| Q1
+        Q1 -->|"has (1:N)"| A1
+    end
+    
+    subgraph "User Aggregate"
+        UR["👤 User<br/>(Aggregate Root)"]
+    end
+    
+    subgraph "Invitation Aggregate"
+        IR["📧 Invitation<br/>(Aggregate Root)"]
+    end
+    
+    subgraph "Participation Aggregate"
+        PR["🎯 Participation<br/>(Aggregate Root)"]
+        AS["📊 AnswerSubmission<br/>(Entity)"]
+        
+        PR -->|"contains (1:N)"| AS
+    end
+    
+    %% Cross-aggregate references (by ID only)
+    QR -.->|"created by"| UR
+    IR -.->|"for quiz"| QR
+    IR -.->|"invited user"| UR
+    IR -.->|"inviter user"| UR
+    PR -.->|"quiz reference"| QR
+    PR -.->|"participant"| UR
+    PR -.->|"via invitation"| IR
+    AS -.->|"question reference"| Q1
+    AS -.->|"selected answer"| A1
+    
+    classDef aggregateRoot fill:#ffebee,stroke:#d32f2f,stroke-width:3px
+    classDef entity fill:#e8f5e8,stroke:#388e3c,stroke-width:2px
+    classDef reference stroke-dasharray: 5 5,stroke:#666
+    
+    class QR,UR,IR,PR aggregateRoot
+    class Q1,A1,AS entity
+```
+
+**Aggregate Boundaries & Responsibilities:**
+
+- **🏛️ Quiz Aggregate**: Manages quiz creation, questions, and answers with proper ordering and validation
+- **👤 User Aggregate**: Handles user identity, authentication, and profile management  
+- **📧 Invitation Aggregate**: Controls invitation lifecycle, acceptance rules, and user permissions
+- **🎯 Participation Aggregate**: Manages quiz participation, answer submissions, and scoring
+
+**DDD Design Principles:**
+- **Aggregate Roots** (red boxes) are the only entry points to their aggregates
+- **Cross-aggregate references** (dotted lines) use IDs only, never direct object references
+- **Business invariants** are maintained within each aggregate boundary
+- **Consistency** is guaranteed within aggregates, eventual consistency between aggregates
+
 ## Getting Started
 
 ### Prerequisites
@@ -321,3 +422,39 @@ For detailed testing instructions, API usage examples, and complete testing work
 
 - [Testing Guide](HOW_TO_TEST.md) - Comprehensive testing instructions and examples
 - [Architecture Documentation](quiz/tests/README.md) - Technical architecture details
+
+## 🚀 Future Improvements
+
+### 🏗️ Architecture & Design Patterns
+- **Dependency Injection Container**: Implement proper DI container (e.g., `dependency-injector`)
+- **SOLID Principles Refactoring**: Refactor `user` subdomain and admin views applying SOLID principles
+- **Criteria Pattern**: Replace multiple `find_by_*` methods with flexible criteria-based queries
+
+### ⚡ Performance & Scalability
+- **ASGI with Uvicorn**: Migrate from WSGI to ASGI for async programming and better throughput
+- **Database Indexes**: Add strategic indexes for frequent queries (user-quiz, creator-quiz, scores)
+- **Pagination**: Add pagination to all read endpoints
+- **Materialized Views**: Pre-computed views for complex aggregations
+- **Connection Pooling**: Implement persistent database connections
+- **CQRS Enhancement**: Separate read/write databases with dedicated read replicas
+
+### 🔄 Event-Driven Architecture
+- **Async Event Bus**: Implement domain events with RabbitMQ message broker
+- **Enhanced Task Queue**: Replace Redis with RabbitMQ for Celery (better reliability and monitoring)
+
+### 🏢 Infrastructure & Scaling
+- **Horizontal Scaling**: Kubernetes deployment with multiple pods and load balancer
+- **Auto-scaling (HPA)**: Horizontal Pod Autoscaler based on metrics
+- **Database Replicas**: Distribute read load across replicas for resilience and performance
+
+### 🧪 Testing Enhancements
+- **Integration Testing**: End-to-end API workflow testing with real database interactions
+- **Acceptance Testing**: BDD with Gherkin scenarios for business requirements
+
+### 📊 Monitoring & Observability
+- **Sentry**: Real-time error tracking and performance monitoring
+- **Datadog**: APM, infrastructure monitoring, and custom business metrics
+
+### 🔒 Security & Operations
+- **Secret Management**: Remove `secrets.env` from repository
+- **Rate Limiting**: Per-user and IP-based rate limits for security and performance
