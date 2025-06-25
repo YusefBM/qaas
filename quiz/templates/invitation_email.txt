@@ -15,7 +15,7 @@ Personal Message:
 {% endif %}
 
 To accept the invitation and start the quiz, please visit:
-{{ invitation_link }}
+{{ invitation_acceptance_link }}
 
 ---
 This is an automated email. Please do not reply. 
