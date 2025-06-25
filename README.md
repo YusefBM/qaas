@@ -2,6 +2,83 @@
 
 A Django-based Quiz-as-a-Service platform that allows users to create, manage, and participate in quizzes through a REST API. Built with Clean Architecture principles using Domain-Driven Design (DDD) and CQRS patterns.
 
+## Getting Started
+
+### Prerequisites
+- Docker
+- Docker Compose
+- Make (for convenience commands)
+
+### Installation & Setup
+
+1. **Clone the repository:**
+```bash
+git clone <repository-url>
+cd qaas
+```
+
+2. **Complete setup with one command:**
+```bash
+# This will set up everything: environment, build, migrate, and create superuser
+make setup-env
+```
+
+3. **Start the application:**
+```bash
+# Start all services (Django, PostgreSQL, Redis, Celery)
+make run
+```
+
+4. **Access the application:**
+   - API Base URL: http://localhost:8000/api/v1/
+   - Admin Interface: http://localhost:8000/admin/
+
+### Common Development Commands
+
+```bash
+# Stop the application
+make stop
+
+# Restart the application
+make restart
+
+# Access Django shell
+make shell
+
+# Run all tests
+make test
+
+# Generate new migrations
+make generate-migrations
+
+# Apply specific migration
+make migrate app=quiz migration=0001
+
+# View all available commands
+make help
+```
+
+### Redo env and/or reapply database migrations
+
+If you need to totally drop your environment and recreate it from scratch or reapply the DB migrations,
+run `make refresh-env`. 
+
+### Code Quality Commands
+
+```bash
+# Run all linting checks (flake8 + black)
+make lint
+
+# Format code automatically with black
+make format
+
+# Run only flake8 linter
+make lint-flake8
+
+# Run only black formatter check
+make lint-black
+```
+
 ## Features
 
 ### Quiz Creator Functionality
@@ -37,6 +114,80 @@ A Django-based Quiz-as-a-Service platform that allows users to create, manage, a
 - **Containerization**: Docker & Docker Compose
 - **Code Quality**: Black, Flake8
 - **Architecture**: Clean Architecture with DDD and CQRS
+
+## API Documentation
+
+### API Versioning
+
+The API uses **URL path versioning** for clean and maintainable version management:
+- **Current Version**: `v1`
+- **Base URL**: `http://localhost:8000/api/v1/`
+- **Future Versions**: Easy to add (`v2`, `v3`, etc.) without breaking existing endpoints
+
+### Core API Endpoints (v1)
+
+| Endpoint | Method | Description | Auth Required |
+|----------|--------|-------------|---------------|
+| `/api/v1/quizzes/` | GET | List user's accessible quizzes | ✅ |
+| `/api/v1/quizzes/` | POST | Create a new quiz | ✅ |
+| `/api/v1/quizzes/{quiz_id}/` | GET | Get quiz details | ✅ |
+| `/api/v1/creators/{creator_id}/quizzes/` | GET | Get creator's quizzes | ✅ |
+| `/api/v1/quizzes/{quiz_id}/invitations/` | POST | Send quiz invitation | ✅ |
+| `/api/v1/invitations/{invitation_id}/accept/` | POST | Accept invitation | ✅ |
+| `/api/v1/quizzes/{quiz_id}/submit/` | POST | Submit quiz answers | ✅ |
+| `/api/v1/quizzes/{quiz_id}/progress/` | GET | Get my quiz progress (participant) | ✅ |
+| `/api/v1/quizzes/{quiz_id}/scores/` | GET | Get quiz scores (creator only) | ✅ |
+| `/api/v1/quizzes/{quiz_id}/creator-progress/` | GET | Get creator quiz progress | ✅ |
+
+For detailed API usage examples, request/response formats, and complete testing workflows, see the [Testing Guide](HOW_TO_TEST.md).
+
+## Authentication
+
+The API uses **JWT Authentication** with the following endpoints:
+
+| Endpoint | Method | Description |
+|----------|--------|-------------|
+| `/api/v1/auth/register/` | POST | User registration |
+| `/api/v1/auth/login/` | POST | Login and get JWT tokens |
+| `/api/v1/auth/refresh/` | POST | Refresh access token |
+| `/api/v1/auth/verify/` | POST | Verify token validity |
+| `/api/v1/auth/logout/` | POST | Logout and blacklist token |
+| `/api/v1/profile/` | GET | Get user profile |
+
+**Token Configuration:**
+- Access Token Lifetime: 60 minutes
+- Refresh Token Lifetime: 7 days
+- Token rotation enabled
+- Token blacklisting on logout
+
+For detailed authentication usage, see the [Testing Guide](HOW_TO_TEST.md).
+
+## Security Features
+
+- **JWT Authentication**: Token-based authentication with rotation
+  - Access tokens expire in 60 minutes
+  - Refresh tokens expire in 7 days
+  - Automatic token rotation and blacklisting
+- **Token Blacklisting**: Secure logout functionality with token invalidation
+- **Permission Checks**: Proper authorization throughout the application
+- **ALLOWED_HOSTS**: Configurable host validation (defaults to "*" in debug mode)
+- **UUID Primary Keys**: Non-sequential identifiers for enhanced security
+- **Input Validation**: Comprehensive request validation using Voluptuous
+- **SQL Injection Protection**: Django ORM built-in protection
+
+## Testing
+
+The project includes comprehensive tests covering all layers of the Clean Architecture:
+- **Domain Layer**: Business logic and rules
+- **Application Layer**: Command and query handlers
+- **Infrastructure Layer**: Repositories and external services
+
+```bash
+# Run all tests
+make test
+```
+
+For detailed testing instructions, API usage examples, and complete testing workflows, see the [Testing Guide](HOW_TO_TEST.md).
 
 ## Architecture
 
@@ -252,162 +403,13 @@ graph TB
 - **Business invariants** are maintained within each aggregate boundary
 - **Consistency** is guaranteed within aggregates, eventual consistency between aggregates
 
-## Getting Started
 
-### Prerequisites
-- Docker
-- Docker Compose
-- Make (for convenience commands)
-
-### Installation & Setup
-
-1. **Clone the repository:**
-```bash
-git clone <repository-url>
-cd qaas
-```
-
-2. **Complete setup with one command:**
-```bash
-# This will set up everything: environment, build, migrate, and create superuser
-make setup-env
-```
-
-3. **Start the application:**
-```bash
-# Start all services (Django, PostgreSQL, Redis, Celery)
-make run
-```
-
-4. **Access the application:**
-   - API Base URL: http://localhost:8000/api/v1/
-   - Admin Interface: http://localhost:8000/admin/
-
-### Common Development Commands
-
-```bash
-# Stop the application
-make stop
-
-# Restart the application
-make restart
-
-# Access Django shell
-make shell
-
-# Run all tests
-make test
-
-# Generate new migrations
-make generate-migrations
-
-# Apply specific migration
-make migrate app=quiz migration=0001
-
-# View all available commands
-make help
-```
-
-### Redo env and/or reapply database migrations
-
-If you need to totally drop your environment and recreate it from scratch or reapply the DB migrations,
-run `make refresh-env`. 
-
-### Code Quality Commands
-
-```bash
-# Run all linting checks (flake8 + black)
-make lint
-
-# Format code automatically with black
-make format
-
-# Run only flake8 linter
-make lint-flake8
-
-# Run only black formatter check
-make lint-black
-```
-
-## Authentication
-
-The API uses **JWT Authentication** with the following endpoints:
-
-| Endpoint | Method | Description |
-|----------|--------|-------------|
-| `/api/v1/auth/register/` | POST | User registration |
-| `/api/v1/auth/login/` | POST | Login and get JWT tokens |
-| `/api/v1/auth/refresh/` | POST | Refresh access token |
-| `/api/v1/auth/verify/` | POST | Verify token validity |
-| `/api/v1/auth/logout/` | POST | Logout and blacklist token |
-| `/api/v1/profile/` | GET | Get user profile |
-
-**Token Configuration:**
-- Access Token Lifetime: 60 minutes
-- Refresh Token Lifetime: 7 days
-- Token rotation enabled
-- Token blacklisting on logout
-
-For detailed authentication usage, see the [Testing Guide](HOW_TO_TEST.md).
-
-## API Documentation
-
-### API Versioning
-
-The API uses **URL path versioning** for clean and maintainable version management:
-- **Current Version**: `v1`
-- **Base URL**: `http://localhost:8000/api/v1/`
-- **Future Versions**: Easy to add (`v2`, `v3`, etc.) without breaking existing endpoints
-
-### Core API Endpoints (v1)
-
-| Endpoint | Method | Description | Auth Required |
-|----------|--------|-------------|---------------|
-| `/api/v1/quizzes/` | GET | List user's accessible quizzes | ✅ |
-| `/api/v1/quizzes/` | POST | Create a new quiz | ✅ |
-| `/api/v1/quizzes/{quiz_id}/` | GET | Get quiz details | ✅ |
-| `/api/v1/creators/{creator_id}/quizzes/` | GET | Get creator's quizzes | ✅ |
-| `/api/v1/quizzes/{quiz_id}/invitations/` | POST | Send quiz invitation | ✅ |
-| `/api/v1/invitations/{invitation_id}/accept/` | POST | Accept invitation | ✅ |
-| `/api/v1/quizzes/{quiz_id}/submit/` | POST | Submit quiz answers | ✅ |
-| `/api/v1/quizzes/{quiz_id}/progress/` | GET | Get my quiz progress (participant) | ✅ |
-| `/api/v1/quizzes/{quiz_id}/scores/` | GET | Get quiz scores (creator only) | ✅ |
-| `/api/v1/quizzes/{quiz_id}/creator-progress/` | GET | Get creator quiz progress | ✅ |
-
-For detailed API usage examples, request/response formats, and complete testing workflows, see the [Testing Guide](HOW_TO_TEST.md).
-
-## Testing
-
-The project includes comprehensive tests covering all layers of the Clean Architecture:
-- **Domain Layer**: Business logic and rules
-- **Application Layer**: Command and query handlers
-- **Infrastructure Layer**: Repositories and external services
-
-```bash
-# Run all tests
-make test
-```
-
-For detailed testing instructions, API usage examples, and complete testing workflows, see the [Testing Guide](HOW_TO_TEST.md).
 
 ## Development
 
 ### Code Quality Tools
 - **Black**: Code formatting (line length: 120)
 - **Flake8**: Linting and style checking
-
-## Security Features
-
-- **JWT Authentication**: Token-based authentication with rotation
-  - Access tokens expire in 60 minutes
-  - Refresh tokens expire in 7 days
-  - Automatic token rotation and blacklisting
-- **Token Blacklisting**: Secure logout functionality with token invalidation
-- **Permission Checks**: Proper authorization throughout the application
-- **ALLOWED_HOSTS**: Configurable host validation (defaults to "*" in debug mode)
-- **UUID Primary Keys**: Non-sequential identifiers for enhanced security
-- **Input Validation**: Comprehensive request validation using Voluptuous
-- **SQL Injection Protection**: Django ORM built-in protection
 
 ## Deployment
 
