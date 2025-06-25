@@ -423,7 +423,7 @@ graph TB
 ## Additional Documentation
 
 - [Testing Guide](HOW_TO_TEST.md) - Comprehensive testing instructions and examples
-- [Architecture Documentation](quiz/tests/README.md) - Technical architecture details
+- [Tests Documentation](quiz/tests/README.md)
 
 ## 🚀 Future Improvements
 
